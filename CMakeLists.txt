@@ -3,4 +3,4 @@ project(ChessEngineC C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(ChessEngineC main.c board.c)
+add_executable(ChessEngineC main.c board.c board.h)

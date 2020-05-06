@@ -81,6 +81,9 @@
 		<Unit filename="/home/anxo/CLionProjects/ChessEngineC/board.c">
 			<Option target="ChessEngineC"/>
 		</Unit>
+		<Unit filename="/home/anxo/CLionProjects/ChessEngineC/board.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
 		<Unit filename="/home/anxo/CLionProjects/ChessEngineC/main.c">
 			<Option target="ChessEngineC"/>
 		</Unit>
