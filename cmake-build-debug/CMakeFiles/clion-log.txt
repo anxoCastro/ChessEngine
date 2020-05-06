@@ -1,0 +1,4 @@
+/snap/clion/112/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/anxo/CLionProjects/ChessEngineC
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/anxo/CLionProjects/ChessEngineC/cmake-build-debug
