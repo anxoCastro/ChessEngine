@@ -1,6 +1,8 @@
 #include <stdio.h>
-
+#include "board.h"
 int main() {
-    printf("Hello, World!\n");
+    board board;
+    initBoard(&board);
+    printBoard(board);
     return 0;
 }
