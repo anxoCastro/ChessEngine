@@ -80,7 +80,7 @@ void initBoard(board *b) {
 unsigned long char_to_bitboard(int chess_box) {
     unsigned long value = 0b1;
     //Corremos la cifra hasta el valor adecuado
-    value = value << 63 - chess_box;
+    value = value << chess_box;
     return value;
 }
 
