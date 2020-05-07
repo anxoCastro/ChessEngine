@@ -74,12 +74,12 @@ clean: CMakeFiles/ChessEngineC.dir/clean
 CMakeFiles/ChessEngineC.dir/all:
 	$(MAKE) -f CMakeFiles/ChessEngineC.dir/build.make CMakeFiles/ChessEngineC.dir/depend
 	$(MAKE) -f CMakeFiles/ChessEngineC.dir/build.make CMakeFiles/ChessEngineC.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles --progress-num=1,2,3 "Built target ChessEngineC"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4 "Built target ChessEngineC"
 .PHONY : CMakeFiles/ChessEngineC.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/ChessEngineC.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles 4
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/ChessEngineC.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/ChessEngineC.dir/rule

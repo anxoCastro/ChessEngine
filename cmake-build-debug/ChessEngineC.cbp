@@ -87,6 +87,12 @@
 		<Unit filename="/home/anxo/CLionProjects/ChessEngineC/main.c">
 			<Option target="ChessEngineC"/>
 		</Unit>
+		<Unit filename="/home/anxo/CLionProjects/ChessEngineC/moves.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/home/anxo/CLionProjects/ChessEngineC/moves.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
 		<Unit filename="/home/anxo/CLionProjects/ChessEngineC/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

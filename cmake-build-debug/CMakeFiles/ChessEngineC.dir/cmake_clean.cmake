@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ChessEngineC.dir/board.c.o"
   "CMakeFiles/ChessEngineC.dir/main.c.o"
+  "CMakeFiles/ChessEngineC.dir/moves.c.o"
   "ChessEngineC"
   "ChessEngineC.pdb"
 )

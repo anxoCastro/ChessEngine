@@ -177,6 +177,33 @@ main.c.s:
 	$(MAKE) -f CMakeFiles/ChessEngineC.dir/build.make CMakeFiles/ChessEngineC.dir/main.c.s
 .PHONY : main.c.s
 
+moves.o: moves.c.o
+
+.PHONY : moves.o
+
+# target to build an object file
+moves.c.o:
+	$(MAKE) -f CMakeFiles/ChessEngineC.dir/build.make CMakeFiles/ChessEngineC.dir/moves.c.o
+.PHONY : moves.c.o
+
+moves.i: moves.c.i
+
+.PHONY : moves.i
+
+# target to preprocess a source file
+moves.c.i:
+	$(MAKE) -f CMakeFiles/ChessEngineC.dir/build.make CMakeFiles/ChessEngineC.dir/moves.c.i
+.PHONY : moves.c.i
+
+moves.s: moves.c.s
+
+.PHONY : moves.s
+
+# target to generate assembly for a file
+moves.c.s:
+	$(MAKE) -f CMakeFiles/ChessEngineC.dir/build.make CMakeFiles/ChessEngineC.dir/moves.c.s
+.PHONY : moves.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -192,6 +219,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... moves.o"
+	@echo "... moves.i"
+	@echo "... moves.s"
 .PHONY : help
 
 

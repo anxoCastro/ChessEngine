@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_C
   "/home/anxo/CLionProjects/ChessEngineC/board.c" "/home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles/ChessEngineC.dir/board.c.o"
   "/home/anxo/CLionProjects/ChessEngineC/main.c" "/home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles/ChessEngineC.dir/main.c.o"
+  "/home/anxo/CLionProjects/ChessEngineC/moves.c" "/home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles/ChessEngineC.dir/moves.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

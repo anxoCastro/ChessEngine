@@ -6,4 +6,9 @@ CMakeFiles/ChessEngineC.dir/board.c.o: ../board.h
 
 CMakeFiles/ChessEngineC.dir/main.c.o: ../board.h
 CMakeFiles/ChessEngineC.dir/main.c.o: ../main.c
+CMakeFiles/ChessEngineC.dir/main.c.o: ../moves.h
+
+CMakeFiles/ChessEngineC.dir/moves.c.o: ../board.h
+CMakeFiles/ChessEngineC.dir/moves.c.o: ../moves.c
+CMakeFiles/ChessEngineC.dir/moves.c.o: ../moves.h
 
