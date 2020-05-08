@@ -5,23 +5,48 @@
 #include "moves.h"
 #include "board.h"
 #include <stdio.h>
+#include <stdlib.h>
+
 //Constantes de bitboards equivalentes a partes del tablero utiles para hacer operaciones
 const unsigned long row_a = 72340172838076673UL;
 const unsigned long row_h = 9259542123273814144UL;
-//Para realizar pruebas
-void print_bitboard(unsigned long b);
+unsigned long black_pieces;
+unsigned long white_pieces;
+unsigned long any_pieces;
 
-//Reserva e inicializa un movimiento
-move *generate_move(){
-
-}
-//Genera un item para la lista de movimientos
-moveItem *generate_move_item(move *m){
-
+moveList *create_move_list(){
+    moveList *list = malloc(sizeof(moveList));
+    list->nElements = 0;
+    return list;
 }
 
-moveList *generate_legal_moves(board *b, moveList *mL){
+void addElement(moveList *l, move m){
+    l->list[l->nElements] = m;
+    l->nElements++;
+}
+
+void generate_legal_moves(board *b, moveList *mL){
     //Creamos la lista
+    mL = create_move_list();
+
+    //Bitboards que representa todas las piezas negras blancas y todas
+    black_pieces = b->BP | b->BN | b->BB | b->BR | b->BQ | b->BK;
+    white_pieces = b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
+    any_pieces = black_pieces | white_pieces;
+
+    //White pawns
+    //Recorremos todas las posiciones de la bit board
+    move m;
+    for(unsigned char i = 0; i < 64; i++){
+        //Peones blancos
+        //Un movimiento hacia delante
+        if( (((white_pieces >> i)&1)==1) && (!((any_pieces >> i - 8)&1)==1) ){
+            m.from = i;
+            m.to = i -8;
+            addElement(mL, m);
+        }
+    }
+
 }
 void print_bitboard(unsigned long b) {
     char charBoard[8][8] = {[0 ... 7][0 ... 7] = '-'};

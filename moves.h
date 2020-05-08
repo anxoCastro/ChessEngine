@@ -2,8 +2,13 @@
 // Created by anxo on 07/05/20.
 //
 //http://cinnamonchess.altervista.org/bitboard_calculator/Calc.html
+#include "board.h"
 #ifndef CHESSENGINEC_MOVES_H
 #define CHESSENGINEC_MOVES_H
+//Tamaño lista movimientos
+//Después de buscar un poco he encontrado alguna posición de más de 200 movimientos en un turno
+//Pero tienen que estar coronados prácticamente todas las reinas
+#define SIZE_LIST_MOVE 200
 typedef struct move{
     //
     //
@@ -13,19 +18,19 @@ typedef struct move{
     unsigned char to;
 }move;
 
-//Quizá una lista estática sea mejor para hacer menos asignaciones de memoria(cuanto movimientos puede tener una jugada de ajedrez)?
-typedef struct moveItem{
-    move *item;
-    struct moveItem *siguiente;
-}moveItem;
 
 typedef struct moveList{
-    moveItem *primero;
-    moveItem *ultimo;
+    move list[SIZE_LIST_MOVE];
+    unsigned short nElements;
 }moveList;
 
 //Constantes de bitboards equivalentes a partes del tablero utiles para hacer operaciones
 extern const unsigned long row_a;
 extern const unsigned long row_h;
+
+
+
 void print_bitboard(unsigned long b);
+void generate_legal_moves(board *b, moveList *mL);
+moveList *create_move_list();
 #endif //CHESSENGINEC_MOVES_H

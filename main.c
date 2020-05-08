@@ -11,5 +11,8 @@ int main() {
     print_bitboard(row_a);
     //Imprimir fila h
     print_bitboard(row_h);
+    moveList *m;
+    create_move_list(m);
+    generate_legal_moves(&board,m);
     return 0;
 }
