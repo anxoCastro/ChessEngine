@@ -28,7 +28,7 @@ void addElement(moveList *l, move m){
     l->nElements++;
 }
 
-moveList *generate_legal_moves(board *b){
+moveList *generate_black_moves(board *b){
     //Creamos la lista
     moveList *mL = create_move_list();
 
@@ -41,13 +41,46 @@ moveList *generate_legal_moves(board *b){
     //Recorremos todas las posiciones de la bit board
     move m;
     //Peones blancos en la segunda fila que podremos avanzar dos casillas
+    unsigned long black_7 = b->BP & row_7;
+    for(unsigned char i = 0; i < 64; i++){
+        //Peones blancos
+        //Un movimiento hacia delante
+        if( (((b->BP >> i)&1)==1) && (!((any_pieces >> i + 8)&1)==1) ){
+            m.from = i;
+            m.to = i + 8;
+            addElement(mL, m);
+        }
+        //Dos movimientos hacia adelante
+        if( (((black_7 >> i)&1) == 1) && (!((any_pieces >> i + 16)&1) == 1)){
+            m.from = i;
+            m.to = i + 16;
+            addElement(mL, m);
+        }
+    }
+
+    return mL;
+
+}
+moveList *generate_white_moves(board *b){
+    //Creamos la lista
+    moveList *mL = create_move_list();
+
+    //Bitboards que representa todas las piezas negras blancas y todas las negras
+    black_pieces = b->BP | b->BN | b->BB | b->BR | b->BQ | b->BK;
+    white_pieces = b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
+    any_pieces = black_pieces | white_pieces;
+
+    //Black pawns
+    //Recorremos todas las posiciones de la bit board
+    move m;
+    //Peones negros en la septima fila que podremos avanzar dos casillas
     unsigned long white_2 = b->WP & row_2;
     for(unsigned char i = 0; i < 64; i++){
         //Peones blancos
         //Un movimiento hacia delante
         if( (((b->WP >> i)&1)==1) && (!((any_pieces >> i - 8)&1)==1) ){
             m.from = i;
-            m.to = i -8;
+            m.to = i - 8;
             addElement(mL, m);
         }
         //Dos movimientos hacia adelante
@@ -61,6 +94,10 @@ moveList *generate_legal_moves(board *b){
     return mL;
 
 }
+moveList *generate_legal_moves(board *b){
+    generate_white_moves(b);
+}
+
 void print_bitboard(unsigned long b) {
     char charBoard[8][8] = {[0 ... 7][0 ... 7] = '-'};
     for (int i = 0; i < 64; i++) {

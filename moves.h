@@ -34,6 +34,8 @@ extern const unsigned long row_7;
 void print_bitboard(unsigned long b);
 moveList *create_move_list();
 moveList *generate_legal_moves(board *b);
+moveList *generate_black_moves(board *b);
+moveList *generate_white_moves(board *b);
 void move_to_string(move *m, char *string);
 moveList *create_move_list();
 #endif //CHESSENGINEC_MOVES_H
