@@ -10,8 +10,10 @@
 //Constantes de bitboards equivalentes a partes del tablero utiles para hacer operaciones
 const unsigned long column_a = 72340172838076673UL;
 const unsigned long column_h = 9259542123273814144UL;
+const unsigned long row_1 = 18374686479671623680UL;
 const unsigned long row_2 = 71776119061217280UL;
 const unsigned long row_7 = 65280UL;
+const unsigned long row_8 = 255UL;
 unsigned long black_pieces;
 unsigned long white_pieces;
 unsigned long any_pieces;
@@ -36,14 +38,13 @@ moveList *generate_black_moves(board *b){
     black_pieces = b->BP | b->BN | b->BB | b->BR | b->BQ | b->BK;
     white_pieces = b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
     any_pieces = black_pieces | white_pieces;
-
-    //White pawns
-    //Recorremos todas las posiciones de la bit board
+    //Black pawns
+    //Recorremos todas las posiciones de la bit board menos la fila 8
     move m;
     //Peones blancos en la segunda fila que podremos avanzar dos casillas
     unsigned long black_7 = b->BP & row_7;
-    for(unsigned char i = 0; i < 64; i++){
-        //Peones blancos
+    for(unsigned char i = 0; i < 56; i++){
+        //Peones negros
         //Un movimiento hacia delante
         if( (((b->BP >> i)&1)==1) && (!((any_pieces >> i + 8)&1)==1) ){
             m.from = i;
@@ -56,6 +57,7 @@ moveList *generate_black_moves(board *b){
             m.to = i + 16;
             addElement(mL, m);
         }
+
     }
 
     return mL;
@@ -70,15 +72,15 @@ moveList *generate_white_moves(board *b){
     white_pieces = b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
     any_pieces = black_pieces | white_pieces;
 
-    //Black pawns
-    //Recorremos todas las posiciones de la bit board
+    //White pawns
+    //Recorremos todas las posiciones de la bit board menos la fila 8
     move m;
-    //Peones negros en la septima fila que podremos avanzar dos casillas
+    //Peones blancos en la septima fila que podremos avanzar dos casillas
     unsigned long white_2 = b->WP & row_2;
-    for(unsigned char i = 0; i < 64; i++){
+    for(unsigned char i = 8; i < 64; i++){
         //Peones blancos
         //Un movimiento hacia delante
-        if( (((b->WP >> i)&1)==1) && (!((any_pieces >> i - 8)&1)==1) ){
+        if( (((b->WP>> i)&1)==1) && (!((any_pieces >> i - 8)&1)==1) ){
             m.from = i;
             m.to = i - 8;
             addElement(mL, m);
