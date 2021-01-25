@@ -87,7 +87,7 @@ unsigned long char_to_bitboard(int chess_box) {
 //Para ver que funciona bien
 void printBoard(board b) {
     char charBoard[8][8] = {[0 ... 7][0 ... 7] = '-'};
-    printf("%lu\n", b.WP);
+    //printf("%lu\n", b.WP);
     for (int i = 0; i < 64; i++) {
         if (((b.WP >> i) & 1) == 1) {
             charBoard[i / 8][i % 8] = 'P';

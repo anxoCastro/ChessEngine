@@ -21,15 +21,16 @@ moveList *create_move_list(){
 }
 
 void addElement(moveList *l, move m){
-    l->list[l->nElements] = m;
+    l->list[l->nElements].from = m.from;
+    l->list[l->nElements].to = m.to;
     l->nElements++;
 }
 
-void generate_legal_moves(board *b, moveList *mL){
+moveList *generate_legal_moves(board *b){
     //Creamos la lista
-    mL = create_move_list();
+    moveList *mL = create_move_list();
 
-    //Bitboards que representa todas las piezas negras blancas y todas
+    //Bitboards que representa todas las piezas negras blancas y todas las negras
     black_pieces = b->BP | b->BN | b->BB | b->BR | b->BQ | b->BK;
     white_pieces = b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
     any_pieces = black_pieces | white_pieces;
@@ -46,6 +47,8 @@ void generate_legal_moves(board *b, moveList *mL){
             addElement(mL, m);
         }
     }
+
+    return mL;
 
 }
 void print_bitboard(unsigned long b) {
@@ -66,11 +69,11 @@ void print_bitboard(unsigned long b) {
 //Falta promocion
 void move_to_string(move *m, char *string){
     //Origen
-    string[0] = 'a' + 8 - (m->from % 8);
-    string[1]  = '1' + 8 - (m->from / 8);
+    string[0] = 'a' + 7 - (m->from % 8);
+    string[1]  = '1' + 7 - (m->from / 8);
     //Destino
-    string[2] = 'a' + 8 - (m->to % 8);
-    string[3] = '1' + 8 - (m->to / 8);
+    string[2] = 'a' + 7 - (m->to % 8);
+    string[3] = '1' + 7 - (m->to / 8);
 }
 
 void string_to_move(char *string, move *m){

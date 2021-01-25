@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "board.h"
 #include "moves.h"
 int main() {
@@ -12,7 +13,12 @@ int main() {
     //Imprimir fila h
     print_bitboard(row_h);
     moveList *m;
-    create_move_list(m);
-    generate_legal_moves(&board,m);
+    m = generate_legal_moves(&board);
+    char* string = malloc(sizeof(char) * 4);
+    for(int i = 0; i < m->nElements; i++){
+      move_to_string(&m->list[i], string);        
+
+      printf("%s\n", string);
+    }
     return 0;
 }
