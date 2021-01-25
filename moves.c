@@ -8,8 +8,10 @@
 #include <stdlib.h>
 
 //Constantes de bitboards equivalentes a partes del tablero utiles para hacer operaciones
-const unsigned long row_a = 72340172838076673UL;
-const unsigned long row_h = 9259542123273814144UL;
+const unsigned long column_a = 72340172838076673UL;
+const unsigned long column_h = 9259542123273814144UL;
+const unsigned long row_2 = 71776119061217280UL;
+const unsigned long row_7 = 65280UL;
 unsigned long black_pieces;
 unsigned long white_pieces;
 unsigned long any_pieces;
@@ -38,12 +40,20 @@ moveList *generate_legal_moves(board *b){
     //White pawns
     //Recorremos todas las posiciones de la bit board
     move m;
+    //Peones blancos en la segunda fila que podremos avanzar dos casillas
+    unsigned long white_2 = b->WP & row_2;
     for(unsigned char i = 0; i < 64; i++){
         //Peones blancos
         //Un movimiento hacia delante
-        if( (((white_pieces >> i)&1)==1) && (!((any_pieces >> i - 8)&1)==1) ){
+        if( (((b->WP >> i)&1)==1) && (!((any_pieces >> i - 8)&1)==1) ){
             m.from = i;
             m.to = i -8;
+            addElement(mL, m);
+        }
+        //Dos movimientos hacia adelante
+        if( (((white_2 >> i)&1) == 1) && (!((any_pieces >> i - 16)&1) == 1)){
+            m.from = i;
+            m.to = i - 16;
             addElement(mL, m);
         }
     }

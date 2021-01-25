@@ -9,9 +9,9 @@ int main() {
     printBoard(board);
 
     //Imprimir bitboard fila a
-    print_bitboard(row_a);
+    print_bitboard(column_a);
     //Imprimir fila h
-    print_bitboard(row_h);
+    print_bitboard(column_h);
     moveList *m;
     m = generate_legal_moves(&board);
     char* string = malloc(sizeof(char) * 4);

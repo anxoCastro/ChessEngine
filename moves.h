@@ -25,9 +25,10 @@ typedef struct moveList{
 }moveList;
 
 //Constantes de bitboards equivalentes a partes del tablero utiles para hacer operaciones
-extern const unsigned long row_a;
-extern const unsigned long row_h;
-
+extern const unsigned long column_a;
+extern const unsigned long column_h;
+extern const unsigned long row_2;
+extern const unsigned long row_7;
 
 
 void print_bitboard(unsigned long b);
