@@ -57,6 +57,18 @@ moveList *generate_black_moves(board *b){
             m.to = i + 16;
             addElement(mL, m);
         }
+        //Comer pieza a la derecha
+        if( (((b->BP >> i)&1)==1) && (((white_pieces >> (i+9))&1) == 1) ){
+            m.from = i;
+            m.to = i+ 9;
+            addElement(mL, m);
+        }
+        //Comer pieza a la izquierda
+        if( (((b->BP >> i)&1)==1) && (((white_pieces >> (i+7))&1) == 1) ){
+            m.from = i;
+            m.to = i + 7;
+            addElement(mL, m);
+        }
 
     }
 
@@ -89,6 +101,18 @@ moveList *generate_white_moves(board *b){
         if( (((white_2 >> i)&1) == 1) && (!((any_pieces >> i - 16)&1) == 1)){
             m.from = i;
             m.to = i - 16;
+            addElement(mL, m);
+        }
+        //Comer pieza a la derecha
+        if( (((b->WP >> i)&1)==1) && (((black_pieces >> (i-9))&1) == 1) ){
+            m.from = i;
+            m.to = i - 9;
+            addElement(mL, m);
+        }
+        //Comer pieza a la izquierda
+        if( (((b->WP >> i)&1)==1) && (((black_pieces >> (i-7))&1) == 1) ){
+            m.from = i;
+            m.to = i - 7;
             addElement(mL, m);
         }
     }
