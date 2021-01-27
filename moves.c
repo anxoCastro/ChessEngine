@@ -52,7 +52,7 @@ moveList *generate_black_moves(board *b){
             addElement(mL, m);
         }
         //Dos movimientos hacia adelante
-        if( (((black_7 >> i)&1) == 1) && (!((any_pieces >> i + 16)&1) == 1)){
+        if( (((black_7 >> i)&1) == 1) && (!((any_pieces >> i + 16)&1) == 1) && (!((any_pieces >> i + 8)&1)==1)){
             m.from = i;
             m.to = i + 16;
             addElement(mL, m);
@@ -98,7 +98,7 @@ moveList *generate_white_moves(board *b){
             addElement(mL, m);
         }
         //Dos movimientos hacia adelante
-        if( (((white_2 >> i)&1) == 1) && (!((any_pieces >> i - 16)&1) == 1)){
+        if( (((white_2 >> i)&1) == 1) && (!((any_pieces >> i - 16)&1) == 1) && (!((any_pieces >> i - 8)&1)==1)){
             m.from = i;
             m.to = i - 16;
             addElement(mL, m);
@@ -142,10 +142,10 @@ void print_bitboard(unsigned long b) {
 //Falta promocion
 void move_to_string(move *m, char *string){
     //Origen
-    string[0] = 'a' + 7 - (m->from % 8);
+    string[0] = 'a' + (m->from % 8);
     string[1]  = '1' + 7 - (m->from / 8);
     //Destino
-    string[2] = 'a' + 7 - (m->to % 8);
+    string[2] = 'a' + (m->to % 8);
     string[3] = '1' + 7 - (m->to / 8);
 }
 

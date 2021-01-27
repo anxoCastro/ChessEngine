@@ -12,7 +12,7 @@ int main() {
     m = generate_white_moves(&board);
     char* string = malloc(sizeof(char) * 4);
     move_to_string(&m->list[0], string);    
-    printf("Movimiento blancas: %s ", string);
+    printf("Movimiento blancas: %s", string);
     for(int i = 1; i < m->nElements; i++){
       move_to_string(&m->list[i], string);        
       printf(", %s", string);
