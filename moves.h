@@ -7,7 +7,7 @@
 #define CHESSENGINEC_MOVES_H
 //Tamaño lista movimientos
 //Después de buscar un poco he encontrado alguna posición de más de 200 movimientos en un turno
-//Pero tienen que estar coronados prácticamente todas las reinas
+//Pero tienen que estar coronadas prácticamente todas los peones
 #define SIZE_LIST_MOVE 200
 typedef struct move{
     //

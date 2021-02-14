@@ -50,13 +50,14 @@ moveList *generate_black_moves(board *b){
             m.from = i;
             m.to = i + 8;
             addElement(mL, m);
+            //Dos movimientos hacia adelante
+            if( (((black_7 >> i)&1) == 1) && (!((any_pieces >> i + 16)&1) == 1)){
+                m.from = i;
+                m.to = i + 16;
+                addElement(mL, m);
+            }
         }
-        //Dos movimientos hacia adelante
-        if( (((black_7 >> i)&1) == 1) && (!((any_pieces >> i + 16)&1) == 1) && (!((any_pieces >> i + 8)&1)==1)){
-            m.from = i;
-            m.to = i + 16;
-            addElement(mL, m);
-        }
+        
         //Comer pieza a la derecha
         if( (((b->BP >> i)&1)==1) && (((white_pieces >> (i+9))&1) == 1) ){
             m.from = i;
@@ -69,6 +70,9 @@ moveList *generate_black_moves(board *b){
             m.to = i + 7;
             addElement(mL, m);
         }
+
+        //Captura al paso
+        
 
     }
 
@@ -96,12 +100,12 @@ moveList *generate_white_moves(board *b){
             m.from = i;
             m.to = i - 8;
             addElement(mL, m);
-        }
-        //Dos movimientos hacia adelante
-        if( (((white_2 >> i)&1) == 1) && (!((any_pieces >> i - 16)&1) == 1) && (!((any_pieces >> i - 8)&1)==1)){
-            m.from = i;
-            m.to = i - 16;
-            addElement(mL, m);
+            //Dos movimientos hacia adelante
+            if( (((white_2 >> i)&1) == 1) && (!((any_pieces >> i - 16)&1) == 1)){
+                m.from = i;
+                m.to = i - 16;
+                addElement(mL, m);
+            }
         }
         //Comer pieza a la derecha
         if( (((b->WP >> i)&1)==1) && (((black_pieces >> (i-9))&1) == 1) ){
