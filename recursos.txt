@@ -2,3 +2,10 @@ Magic bitboards:
     https://essays.jwatzman.org/essays/chess-move-generation-with-magic-bitboards.html
 Calcular bitboards:
     http://cinnamonchess.altervista.org/bitboard_calculator/Calc.html
+Teoría en general:
+    http://www.frayn.net/beowulf/theory.html
+    
+    http://graphics.stanford.edu/%7Eseander/bithacks.html
+    
+    
+    

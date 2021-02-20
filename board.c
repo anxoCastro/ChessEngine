@@ -21,7 +21,7 @@ void initBoard(board *b) {
     char board_values[8][8] = {
             {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
             {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
-            {'-', '-', '-', '-', '-', '-', '-', '-'},
+            {'-', '-', '-', '-', '-', '-', '-', 'P'},
             {'-', '-', '-', '-', '-', '-', '-', '-'},
             {'-', '-', '-', '-', '-', '-', '-', '-'},
             {'-', '-', '-', '-', '-', '-', '-', '-'},
@@ -74,6 +74,10 @@ void initBoard(board *b) {
             }
         }
     };
+    //Empiezan las blancas
+    b->side = 0;
+    //Inicializar enroques
+    b->castle = 0b00001111;
 }
 
 //Escribe un 1 posición indicada(la primera es el 0)
@@ -131,4 +135,17 @@ void printBoard(board b) {
         printf("%c%c%c%c%c%c%c%c\n", charBoard[i][0], charBoard[i][1], charBoard[i][2],
                charBoard[i][3], charBoard[i][4], charBoard[i][5], charBoard[i][6], charBoard[i][7]);
     }
+}
+
+int floor_log2(unsigned long bitboard)
+{
+    int pos = 0;
+    if (bitboard >= (unsigned long)1<<32) { bitboard >>= 32; pos += 32; }
+    if (bitboard >= (unsigned long)1<<16) { bitboard >>= 16; pos += 16; }
+    if (bitboard >= (unsigned long)1<< 8) { bitboard >>=  8; pos +=  8; }
+    if (bitboard >= (unsigned long)1<< 4) { bitboard >>=  4; pos +=  4; }
+    if (bitboard >= (unsigned long)1<< 2) { bitboard >>=  2; pos +=  2; }
+    if (bitboard >= (unsigned long)1<< 1) {               pos +=  1; }
+
+    return ((bitboard == 0) ? (-1) : pos);
 }

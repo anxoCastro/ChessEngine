@@ -27,10 +27,18 @@ moveList *create_move_list(){
 void addElement(moveList *l, move m){
     l->list[l->nElements].from = m.from;
     l->list[l->nElements].to = m.to;
+    l->list[l->nElements].castlingsquare = m.castlingsquare;
     l->nElements++;
 }
-
-moveList *generate_black_moves(board *b){
+moveList *generate_legal_moves(board *b, move lastMove){
+    if(b->side){
+        generate_black_moves(b, lastMove);
+    }
+    else{
+        generate_white_moves(b, lastMove);
+    }
+}
+moveList *generate_black_moves(board *b, move lastMove){
     //Creamos la lista
     moveList *mL = create_move_list();
 
@@ -49,11 +57,14 @@ moveList *generate_black_moves(board *b){
         if( (((b->BP >> i)&1)==1) && (!((any_pieces >> i + 8)&1)==1) ){
             m.from = i;
             m.to = i + 8;
+            m.castlingsquare = 0;
             addElement(mL, m);
             //Dos movimientos hacia adelante
             if( (((black_7 >> i)&1) == 1) && (!((any_pieces >> i + 16)&1) == 1)){
                 m.from = i;
                 m.to = i + 16;
+                //Indicar que se puede hacer captura al paso después de este movimiento
+                m.castlingsquare = 1UL << i;
                 addElement(mL, m);
             }
         }
@@ -62,24 +73,42 @@ moveList *generate_black_moves(board *b){
         if( (((b->BP >> i)&1)==1) && (((white_pieces >> (i+9))&1) == 1) ){
             m.from = i;
             m.to = i+ 9;
+            m.castlingsquare = 0;
             addElement(mL, m);
         }
         //Comer pieza a la izquierda
         if( (((b->BP >> i)&1)==1) && (((white_pieces >> (i+7))&1) == 1) ){
             m.from = i;
             m.to = i + 7;
+            m.castlingsquare = 0;
             addElement(mL, m);
         }
-
-        //Captura al paso
-        
-
+    }
+    //Captura al paso
+    if(lastMove.castlingsquare){
+        int objetivo = floor_log2(lastMove.castlingsquare);
+        //Comer a la izquierda
+        if((b->BP >> (objetivo-1)&1) == 1){
+            m.from = objetivo-1;
+            m.to = objetivo+7;
+            m.castlingsquare = 0;
+            m.castling = 1;
+            addElement(mL, m);
+        }
+        //Comer a la derecha
+        if((b->BP >> (objetivo+1)&1) == 1){
+            m.from = objetivo+1;
+            m.to = objetivo+9;
+            m.castlingsquare = 0;
+            m.castling = 1;
+            addElement(mL, m);
+        }
     }
 
     return mL;
 
 }
-moveList *generate_white_moves(board *b){
+moveList *generate_white_moves(board *b, move lastMove){
     //Creamos la lista
     moveList *mL = create_move_list();
 
@@ -99,11 +128,14 @@ moveList *generate_white_moves(board *b){
         if( (((b->WP>> i)&1)==1) && (!((any_pieces >> i - 8)&1)==1) ){
             m.from = i;
             m.to = i - 8;
+            m.castlingsquare = 0;
             addElement(mL, m);
             //Dos movimientos hacia adelante
             if( (((white_2 >> i)&1) == 1) && (!((any_pieces >> i - 16)&1) == 1)){
                 m.from = i;
                 m.to = i - 16;
+                //Indicar que se puede hacer captura al paso después de este movimiento
+                m.castlingsquare = 1UL >> i;
                 addElement(mL, m);
             }
         }
@@ -111,21 +143,39 @@ moveList *generate_white_moves(board *b){
         if( (((b->WP >> i)&1)==1) && (((black_pieces >> (i-9))&1) == 1) ){
             m.from = i;
             m.to = i - 9;
+            m.castlingsquare = 0;
             addElement(mL, m);
         }
         //Comer pieza a la izquierda
         if( (((b->WP >> i)&1)==1) && (((black_pieces >> (i-7))&1) == 1) ){
             m.from = i;
             m.to = i - 7;
+            m.castlingsquare = 0;
             addElement(mL, m);
         }
     }
-
+    //Captura al paso
+    if(lastMove.castlingsquare){
+        int objetivo = floor_log2(lastMove.castlingsquare);
+        //Comer a la izquierda
+        if((b->WP >> (objetivo-1)&1) == 1){
+            m.from = objetivo-1;
+            m.to = objetivo-7;
+            m.castlingsquare = 0;
+            m.castling = 1;
+            addElement(mL, m);
+        }
+        //Comer a la derecha
+        if((b->BP >> (objetivo+1)&1) == 1){
+            m.from = objetivo+1;
+            m.to = objetivo-9;
+            m.castlingsquare = 0;
+            m.castling = 1;
+            addElement(mL, m);
+        }
+    }
     return mL;
 
-}
-moveList *generate_legal_moves(board *b){
-    generate_white_moves(b);
 }
 
 void print_bitboard(unsigned long b) {

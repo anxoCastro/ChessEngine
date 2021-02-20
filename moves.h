@@ -1,21 +1,26 @@
 //
 // Created by anxo on 07/05/20.
-//
-//http://cinnamonchess.altervista.org/bitboard_calculator/Calc.html
 #include "board.h"
 #ifndef CHESSENGINEC_MOVES_H
 #define CHESSENGINEC_MOVES_H
 //Tamaño lista movimientos
 //Después de buscar un poco he encontrado alguna posición de más de 200 movimientos en un turno
-//Pero tienen que estar coronadas prácticamente todas los peones
+//Pero tienen que estar coronados prácticamente todas los peones
 #define SIZE_LIST_MOVE 200
 typedef struct move{
     //
     //
-    //Falta implementar promocion
+    //Falta implementar promocion, ,captura, posibilidad de captura al paso...
     //Representa la casilla del(0 al 63) de origen y destino del movimiento
     unsigned char from;
     unsigned char to;
+    //Bitboard del peón donde se podrá hacer captura al paso
+    unsigned long castlingsquare;
+    //Si se realiza captura al paso
+    //0 no
+    //1 si
+    unsigned castling;
+
 }move;
 
 
@@ -33,9 +38,9 @@ extern const unsigned long row_7;
 
 void print_bitboard(unsigned long b);
 moveList *create_move_list();
-moveList *generate_legal_moves(board *b);
-moveList *generate_black_moves(board *b);
-moveList *generate_white_moves(board *b);
+moveList *generate_legal_moves(board *b, move lastMove);
+moveList *generate_black_moves(board *b, move lastMove);
+moveList *generate_white_moves(board *b, move lastMove);
 void move_to_string(move *m, char *string);
 moveList *create_move_list();
 #endif //CHESSENGINEC_MOVES_H

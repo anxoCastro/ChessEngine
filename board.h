@@ -1,7 +1,6 @@
 //
 // Created by anxo on 06/05/20.
 //
-
 #ifndef CHESSENGINEC_BOARD_H
 #define CHESSENGINEC_BOARD_H
 typedef struct{
@@ -29,9 +28,17 @@ typedef struct{
     unsigned  long BQ;
     //Black king
     unsigned long BK;
+    //Turn
+    //1 Black
+    //0 White
+    unsigned side;
+    //Castle
+    //Bitfield : WKS,WQL,BKS,BQL in that order bits 0-3//
+    unsigned long castle;
+
 }board;
 
 void initBoard(board *b);
 void printBoard(board b);
-
+int floor_log2(unsigned long bitboard);
 #endif //CHESSENGINEC_BOARD_H

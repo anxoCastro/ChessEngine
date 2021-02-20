@@ -5,11 +5,12 @@
 int main() {
     //Generar un tablero con la partida empezada e imprimirlo
     board board;
+    //Lista de movimientos de la partida
+    //El primer elemento es un movimiento nulo, se empieza a contar en uno
+    moveList *movelist = create_move_list();
     initBoard(&board);
     printBoard(board);
-
-    moveList *m;
-    m = generate_white_moves(&board);
+    moveList *m = generate_white_moves(&board, movelist->list[movelist->nElements]);
     char* string = malloc(sizeof(char) * 4);
     move_to_string(&m->list[0], string);    
     printf("Movimiento blancas: %s", string);
@@ -18,11 +19,14 @@ int main() {
       printf(", %s", string);
     }
     printf(".\n");
-    m = generate_black_moves(&board);
+    m = generate_black_moves(&board, movelist->list[movelist->nElements]);
     move_to_string(&m->list[0], string);    
     printf("Movimiento negras: %s", string);
     for(int i = 1; i < m->nElements; i++){
-      move_to_string(&m->list[i], string);        
+      move_to_string(&m->list[i], string);  
+      if(m->list[i].castlingsquare){
+        printf("Castling: %lu", m->list[i].castlingsquare);
+      }      
       printf(", %s", string);
     }
     printf(".\n");
