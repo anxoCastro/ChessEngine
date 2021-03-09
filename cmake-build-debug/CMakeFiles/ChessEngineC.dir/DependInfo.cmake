@@ -4,9 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/home/anxo/CLionProjects/ChessEngineC/board.c" "/home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles/ChessEngineC.dir/board.c.o"
-  "/home/anxo/CLionProjects/ChessEngineC/main.c" "/home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles/ChessEngineC.dir/main.c.o"
-  "/home/anxo/CLionProjects/ChessEngineC/moves.c" "/home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles/ChessEngineC.dir/moves.c.o"
+  "/home/castro/Documentos/GitHub/ChessEngine/board.c" "/home/castro/Documentos/GitHub/ChessEngine/cmake-build-debug/CMakeFiles/ChessEngineC.dir/board.c.o"
+  "/home/castro/Documentos/GitHub/ChessEngine/main.c" "/home/castro/Documentos/GitHub/ChessEngine/cmake-build-debug/CMakeFiles/ChessEngineC.dir/main.c.o"
+  "/home/castro/Documentos/GitHub/ChessEngine/moves.c" "/home/castro/Documentos/GitHub/ChessEngine/cmake-build-debug/CMakeFiles/ChessEngineC.dir/moves.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

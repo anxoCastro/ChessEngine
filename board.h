@@ -41,4 +41,6 @@ typedef struct{
 void initBoard(board *b);
 void printBoard(board b);
 int floor_log2(unsigned long bitboard);
+unsigned char count_bits(unsigned long bitboard);
+unsigned char get_ls1b_index(unsigned long bitboard);
 #endif //CHESSENGINEC_BOARD_H

@@ -1,3 +1,3 @@
-/home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/anxo/CLionProjects/ChessEngineC/cmake-build-debug/CMakeFiles/ChessEngineC.dir
+/home/castro/Documentos/GitHub/ChessEngine/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/castro/Documentos/GitHub/ChessEngine/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/castro/Documentos/GitHub/ChessEngine/cmake-build-debug/CMakeFiles/ChessEngineC.dir

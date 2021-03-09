@@ -10,6 +10,7 @@ int main() {
     moveList *movelist = create_move_list();
     initBoard(&board);
     printBoard(board);
+    generate_move_tables();
     moveList *m = generate_white_moves(&board, movelist->list[movelist->nElements]);
     char* string = malloc(sizeof(char) * 4);
     move_to_string(&m->list[0], string);    

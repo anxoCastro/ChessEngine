@@ -7,6 +7,11 @@
 //Después de buscar un poco he encontrado alguna posición de más de 200 movimientos en un turno
 //Pero tienen que estar coronados prácticamente todas los peones
 #define SIZE_LIST_MOVE 200
+
+//Operaciones de bit sobre el bitboard
+#define set_bit(bitboard, square) (bitboard |= (1ULL << square))
+#define get_bit(bitboard, square) (bitboard & (1ULL << square))
+#define pop_bit(bitboard, square) (get_bit(bitboard, square) ? bitboard ^= (1ULL << square) : 0)
 typedef struct move{
     //
     //
@@ -42,5 +47,6 @@ moveList *generate_legal_moves(board *b, move lastMove);
 moveList *generate_black_moves(board *b, move lastMove);
 moveList *generate_white_moves(board *b, move lastMove);
 void move_to_string(move *m, char *string);
+void generate_move_tables();
 moveList *create_move_list();
 #endif //CHESSENGINEC_MOVES_H

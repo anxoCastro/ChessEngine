@@ -10,6 +10,10 @@
 //Constantes de bitboards equivalentes a partes del tablero utiles para hacer operaciones
 const unsigned long column_a = 72340172838076673UL;
 const unsigned long column_h = 9259542123273814144UL;
+const unsigned long not_column_a = 18374403900871474942ULL;
+const unsigned long not_column_h = 9187201950435737471ULL;
+const unsigned long not_column_hg = 4557430888798830399ULL;
+const unsigned long not_column_ab = 18229723555195321596ULL;
 const unsigned long row_1 = 18374686479671623680UL;
 const unsigned long row_2 = 71776119061217280UL;
 const unsigned long row_7 = 65280UL;
@@ -17,7 +21,7 @@ const unsigned long row_8 = 255UL;
 unsigned long black_pieces;
 unsigned long white_pieces;
 unsigned long any_pieces;
-
+unsigned long knight_move_table[64];
 moveList *create_move_list(){
     moveList *list = malloc(sizeof(moveList));
     list->nElements = 0;
@@ -30,6 +34,31 @@ void addElement(moveList *l, move m){
     l->list[l->nElements].castlingsquare = m.castlingsquare;
     l->nElements++;
 }
+
+unsigned long generate_knight_move(int square){
+    unsigned long moves = 0UL;
+
+    unsigned long board = 0UL;
+    set_bit(board, square);
+    //Generar movimientos del caballo
+    if ((board >> 17) & not_column_h) moves |= (board >> 17);
+    if ((board >> 15) & not_column_a) moves |= (board >> 15);
+    if ((board >> 10) & not_column_hg) moves |= (board >> 10);
+    if ((board >> 6) & not_column_ab) moves |= (board >> 6);
+    if ((board << 17) & not_column_a) moves |= (board << 17);
+    if ((board << 15) & not_column_h) moves |= (board << 15);
+    if ((board << 10) & not_column_ab) moves |= (board << 10);
+    if ((board << 6) & not_column_hg) moves |= (board << 6);
+
+    return moves;
+}
+
+void generate_move_tables(){
+    //Generamos tabla de ataque de caballos, peones
+    for(int i = 0; i < 64; i++){
+        knight_move_table[i] = generate_knight_move(i);
+    }
+}
 moveList *generate_legal_moves(board *b, move lastMove){
     if(b->side){
         generate_black_moves(b, lastMove);
@@ -38,6 +67,7 @@ moveList *generate_legal_moves(board *b, move lastMove){
         generate_white_moves(b, lastMove);
     }
 }
+
 moveList *generate_black_moves(board *b, move lastMove){
     //Creamos la lista
     moveList *mL = create_move_list();
@@ -105,6 +135,23 @@ moveList *generate_black_moves(board *b, move lastMove){
         }
     }
 
+    //Caballos negros
+    unsigned long aux;
+    unsigned long BN = b->BN;
+    m.castling = 0;
+    m.castlingsquare = 0;
+    while(BN){
+        //Bitboard con los posibles movimientos de los caballos
+        m.from = get_ls1b_index(BN);
+        aux = knight_move_table[m.from]  & ~black_pieces;
+        while(aux) {
+            m.to = get_ls1b_index(aux);
+            addElement(mL, m);
+            pop_bit(aux, m.to);
+        }
+        pop_bit(BN, m.from);
+
+    }
     return mL;
 
 }
@@ -173,6 +220,24 @@ moveList *generate_white_moves(board *b, move lastMove){
             m.castling = 1;
             addElement(mL, m);
         }
+    }
+
+    //Caballos blancos
+    unsigned long aux;
+    unsigned long WN = b->WN;
+    m.castling = 0;
+    m.castlingsquare = 0;
+    while(WN){
+        //Bitboard con los posibles movimientos de los caballos
+        m.from = get_ls1b_index(WN);
+        aux = knight_move_table[m.from]  & ~white_pieces;
+        while(aux) {
+            m.to = get_ls1b_index(aux);
+            addElement(mL, m);
+            pop_bit(aux, m.to);
+        }
+        pop_bit(WN, m.from);
+
     }
     return mL;
 

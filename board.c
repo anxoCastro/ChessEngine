@@ -21,7 +21,7 @@ void initBoard(board *b) {
     char board_values[8][8] = {
             {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
             {'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
-            {'-', '-', '-', '-', '-', '-', '-', 'P'},
+            {'-', '-', '-', '-', '-', '-', '-', '-'},
             {'-', '-', '-', '-', '-', '-', '-', '-'},
             {'-', '-', '-', '-', '-', '-', '-', '-'},
             {'-', '-', '-', '-', '-', '-', '-', '-'},
@@ -148,4 +148,31 @@ int floor_log2(unsigned long bitboard)
     if (bitboard >= (unsigned long)1<< 1) {               pos +=  1; }
 
     return ((bitboard == 0) ? (-1) : pos);
+}
+//Cuenta el numero de bits en un bitboard
+unsigned char count_bits(unsigned long bitboard) {
+    unsigned char count = 0;
+
+    // consecutively reset least significant 1st bit
+    while (bitboard) {
+        // increment count
+        count++;
+
+        // reset least significant 1st bit
+        bitboard &= bitboard - 1;
+    }
+
+    // return bit count
+    return count;
+}
+//Devuelve la posicion del primer 1 de la tabla(255 si no es bitboard vacio)
+unsigned char get_ls1b_index(unsigned long bitboard)
+{
+    // make sure bitboard is not 0
+    if (bitboard)
+    {
+        // count trailing bits before LS1B
+        return count_bits((bitboard & -bitboard) - 1);
+    }
+    else return 255;
 }
