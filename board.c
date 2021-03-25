@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "board.h"
 
-unsigned long char_to_bitboard(int chess_box);
+
 void initialize_empty_board(board *b){
     b->WP = 0;
     b->WR = 0;
@@ -16,6 +16,16 @@ void initialize_empty_board(board *b){
     b->BK = 0;
     b->BQ = 0;
 }
+
+//Escribe un 1 posición indicada(la primera es el 0)
+unsigned long char_to_bitboard(int chess_box) {
+    unsigned long value = 0b1;
+    //Corremos la cifra hasta el valor adecuado
+    value = value << chess_box;
+    return value;
+}
+
+//Inicia el tablero
 void initBoard(board *b) {
     initialize_empty_board(b);
     char board_values[8][8] = {
@@ -80,99 +90,27 @@ void initBoard(board *b) {
     b->castle = 0b00001111;
 }
 
-//Escribe un 1 posición indicada(la primera es el 0)
-unsigned long char_to_bitboard(int chess_box) {
-    unsigned long value = 0b1;
-    //Corremos la cifra hasta el valor adecuado
-    value = value << chess_box;
-    return value;
-}
 
-//Para ver que funciona bien
+//Imprime tablero
 void printBoard(board b) {
     char charBoard[8][8] = {[0 ... 7][0 ... 7] = '-'};
-    //printf("%lu\n", b.WP);
     for (int i = 0; i < 64; i++) {
-        if (((b.WP >> i) & 1) == 1) {
-            charBoard[i / 8][i % 8] = 'P';
-        }
-        if(((b.WN>>i)&1)==1){
-            charBoard[i / 8][i % 8] = 'N';
-        }
-        if(((b.WB>>i)&1)==1){
-            charBoard[i / 8][i % 8] = 'B';
-        }
-        if(((b.WR>>i)&1)==1){
-            charBoard[i / 8][i % 8] = 'R';
-        }
-        if(((b.WQ>>i)&1)==1){
-            charBoard[i / 8][i % 8] = 'Q';
-        }
-        if(((b.WK>>i)&1)==1){
-            charBoard[i / 8][i % 8] = 'K';
-        }
-        if(((b.BP>>i)&1)==1){
-            charBoard[i / 8][i % 8] = 'p';
-        }
-        if(((b.BN>>i)&1)==1){
-            charBoard[i / 8][i % 8] = 'n';
-        }
-        if(((b.BB>>i)&1)==1){
-            charBoard[i / 8][i % 8] = 'b';
-        }
-        if(((b.BR>>i)&1)==1){
-            charBoard[i / 8][i % 8] = 'r';
-        }
-        if(((b.BQ>>i)&1)==1){
-            charBoard[i / 8][i % 8] = 'q';
-        }
-        if(((b.BK>>i)&1)==1){
-            charBoard[i / 8][i % 8] = 'k';
-        }
+        if((b.WP>>i) &1) charBoard[i / 8][i % 8] = 'P';
+        if((b.WN>>i) &1) charBoard[i / 8][i % 8] = 'N';
+        if((b.WB>>i) &1) charBoard[i / 8][i % 8] = 'B';
+        if((b.WR>>i) &1) charBoard[i / 8][i % 8] = 'R';
+        if((b.WQ>>i) &1) charBoard[i / 8][i % 8] = 'Q';
+        if((b.WK>>i) &1) charBoard[i / 8][i % 8] = 'K';
+        if((b.BP>>i) &1) charBoard[i / 8][i % 8] = 'p';
+        if((b.BN>>i) &1) charBoard[i / 8][i % 8] = 'n';
+        if((b.BB>>i) &1) charBoard[i / 8][i % 8] = 'b';
+        if((b.BR>>i) &1) charBoard[i / 8][i % 8] = 'r';
+        if((b.BQ>>i) &1) charBoard[i / 8][i % 8] = 'q';
+        if((b.BK>>i) &1) charBoard[i / 8][i % 8] = 'k';
     }
     for (int i = 0; i < 8; i++) {
         //Una fila del tablero
         printf("%c%c%c%c%c%c%c%c\n", charBoard[i][0], charBoard[i][1], charBoard[i][2],
                charBoard[i][3], charBoard[i][4], charBoard[i][5], charBoard[i][6], charBoard[i][7]);
     }
-}
-
-int floor_log2(unsigned long bitboard)
-{
-    int pos = 0;
-    if (bitboard >= (unsigned long)1<<32) { bitboard >>= 32; pos += 32; }
-    if (bitboard >= (unsigned long)1<<16) { bitboard >>= 16; pos += 16; }
-    if (bitboard >= (unsigned long)1<< 8) { bitboard >>=  8; pos +=  8; }
-    if (bitboard >= (unsigned long)1<< 4) { bitboard >>=  4; pos +=  4; }
-    if (bitboard >= (unsigned long)1<< 2) { bitboard >>=  2; pos +=  2; }
-    if (bitboard >= (unsigned long)1<< 1) {               pos +=  1; }
-
-    return ((bitboard == 0) ? (-1) : pos);
-}
-//Cuenta el numero de bits en un bitboard
-unsigned char count_bits(unsigned long bitboard) {
-    unsigned char count = 0;
-
-    // consecutively reset least significant 1st bit
-    while (bitboard) {
-        // increment count
-        count++;
-
-        // reset least significant 1st bit
-        bitboard &= bitboard - 1;
-    }
-
-    // return bit count
-    return count;
-}
-//Devuelve la posicion del primer 1 de la tabla(255 si no es bitboard vacio)
-unsigned char get_ls1b_index(unsigned long bitboard)
-{
-    // make sure bitboard is not 0
-    if (bitboard)
-    {
-        // count trailing bits before LS1B
-        return count_bits((bitboard & -bitboard) - 1);
-    }
-    else return 255;
 }
