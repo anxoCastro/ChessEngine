@@ -110,7 +110,8 @@ void printBoard(board b) {
     }
     for (int i = 0; i < 8; i++) {
         //Una fila del tablero
-        printf("%c%c%c%c%c%c%c%c\n", charBoard[i][0], charBoard[i][1], charBoard[i][2],
+        printf("%i  %c %c %c %c %c %c %c %c\n",8 - i, charBoard[i][0], charBoard[i][1], charBoard[i][2],
                charBoard[i][3], charBoard[i][4], charBoard[i][5], charBoard[i][6], charBoard[i][7]);
     }
+    printf("\n   A B C D E F G H\n");
 }

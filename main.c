@@ -21,15 +21,15 @@ int main() {
     }
     printf(".\n");
     m = generate_black_moves(&board, movelist->list[movelist->nElements]);
-    move_to_string(&m->list[0], string);    
-    printf("Movimiento negras: %s", string);
+    move_to_string(&m->list[0], string);
+    //printf("Movimiento negras: %s", string);
     for(int i = 1; i < m->nElements; i++){
       move_to_string(&m->list[i], string);
-      printf(" %s", string);
-        if(m->list[i].castlingsquare){
-            printf(" Castling: %lu\n", m->list[i].castlingsquare);
+      //printf(" %s", string);
+        if(m->list[i].enpassantsquare){
+            //printf(" Castling: %lu\n", m->list[i].enpassantsquare);
         }
     }
-    printf(".\n");
+    //printf(".\n");
     return 0;
 }

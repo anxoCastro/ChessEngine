@@ -9,9 +9,9 @@
 #define SIZE_LIST_MOVE 200
 
 //Operaciones de bit sobre el bitboard
-#define set_bit(bitboard, square) (bitboard |= (1ULL << square))
-#define get_bit(bitboard, square) (bitboard & (1ULL << square))
-#define pop_bit(bitboard, square) (get_bit(bitboard, square) ? bitboard ^= (1ULL << square) : 0)
+#define set_bit(bitboard, square) ((bitboard) |= (1ULL << (square)))
+#define get_bit(bitboard, square) ((bitboard) & (1ULL << (square)))
+#define pop_bit(bitboard, square) (get_bit(bitboard, square) ? (bitboard) ^= (1ULL << (square)) : 0)
 typedef struct move{
     //
     //
@@ -19,12 +19,29 @@ typedef struct move{
     //Representa la casilla del(0 al 63) de origen y destino del movimiento
     unsigned char from;
     unsigned char to;
+
     //Bitboard del peón donde se podrá hacer captura al paso
-    unsigned long castlingsquare;
-    //Si se realiza captura al paso
-    //0 no
-    //1 si
+    unsigned long enpassantsquare;
+
+    //0 si no puede haber captura al paso
+    //1 si puede haber captura al paso
+    unsigned enpassant;
+
+    //0 no promotion
+    //1 promotion to kinght
+    //2 promotion to bishop
+    //3 promotion to rook
+    //4 promotion to queen
+    unsigned promotion;
+
+    //0 no enroque
+    //1 enroque corto
+    //2 enroque largo
     unsigned castling;
+
+    //0 no hubo captura en el movimiento
+    //1 hubo captura en el movimiento
+    unsigned capture;
 
 }move;
 
@@ -34,12 +51,6 @@ typedef struct moveList{
     unsigned short nElements;
 }moveList;
 
-//Constantes de bitboards equivalentes a partes del tablero utiles para hacer operaciones
-extern const unsigned long column_a;
-extern const unsigned long column_h;
-extern const unsigned long row_2;
-extern const unsigned long row_7;
-
 
 void print_bitboard(unsigned long b);
 moveList *create_move_list();
@@ -48,5 +59,4 @@ moveList *generate_black_moves(board *b, move lastMove);
 moveList *generate_white_moves(board *b, move lastMove);
 void move_to_string(move *m, char *string);
 void generate_move_tables();
-moveList *create_move_list();
 #endif //CHESSENGINEC_MOVES_H

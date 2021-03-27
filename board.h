@@ -3,6 +3,16 @@
 //
 #ifndef CHESSENGINEC_BOARD_H
 #define CHESSENGINEC_BOARD_H
+
+
+#define BLACK 1
+#define WHITE 0
+#define PAWN 0
+#define KNIGHT 1
+#define BISHOP 2
+#define ROOK 3
+#define QUEEN 4
+#define KING 5
 typedef struct{
     //White Pawn
     unsigned long WP;
@@ -28,13 +38,13 @@ typedef struct{
     unsigned  long BQ;
     //Black king
     unsigned long BK;
-    //Turn
-    //1 Black
-    //0 White
+
+    //Turno
     unsigned side;
-    //Castle
+
+    //Posibilidades de enroque
     //Bitfield : WKS,WQL,BKS,BQL in that order bits 0-3//
-    unsigned long castle;
+    unsigned castle;
 
 }board;
 
