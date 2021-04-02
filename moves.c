@@ -1,7 +1,3 @@
-//
-// Created by anxo on 07/05/20.
-//
-
 #include "moves.h"
 #include "board.h"
 #include "bitops.h"
@@ -370,7 +366,7 @@ moveList *generate_black_moves(board *b, move lastMove){
                 addElement(mL, from, to, 1, 0, 0, 0, 0);
             }
         }
-        //Promocion peon
+        //Promocion avanzando
         promotion_pushes = pawn_promotion_pushes_table[BLACK][from] & ~any_pieces;
         if(promotion_pushes){
             to = get_ls1b_index(promotion_pushes);
@@ -522,7 +518,7 @@ moveList *generate_white_moves(board *b, move lastMove){
                 addElement(mL, from, to, 1, 0, 0, 0, 0);
             }
         }
-        //Promocion peon
+        //Promocion avanzando
         promotion_pushes = pawn_promotion_pushes_table[WHITE][from] & ~any_pieces;
         if(promotion_pushes){
             to = get_ls1b_index(promotion_pushes);
@@ -624,29 +620,44 @@ moveList *generate_white_moves(board *b, move lastMove){
     return mL;
 
 }
-//Comprobar si el rey está en jaque, 1 si está 0 si no lo está
-int is_in_check(board *b){
+//Comprobar si una casilla está atacada por alguna pieza
+int is_attacked(board *b, int square, unsigned side){
     //Bitboards que representa todas las piezas negras blancas y todas las negras
     black_pieces = b->BP | b->BN | b->BB | b->BR | b->BQ | b->BK;
     white_pieces = b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
     any_pieces = black_pieces | white_pieces;
+    
+    //Si una pieza negra está atacando esta casilla
+    if(side == BLACK){
+        //Si la posición está atacada por un peón blanco(
+        //(es lo mismo que si podriamos comer al peón con un peon negro desde nuestra casilla)
+        if(pawn_attacks_table[BLACK][square] & b->WP) return 1;
+        //Si está siendo atacado por caballos
+        if(knight_move_table[square] & b->BK) return 1;
 
-    //Juegan negras
-    if(b->side){
-        //Casilla del rey
-        int square = get_ls1b_index(b->BK);
-        //Comprobar si algún caballo está atacando al rey
-        if(b->WK & knight_move_table[square]) return -1;
-        //Alfiles
-        if(b->WB & bishop_moves(square, any_pieces) & ~white_pieces) return -1;
-
+        //Incluimos la reina en torres y alfiles para simplificarlo
+        //Si está siendo atacado por alfiles
+        if(bishop_moves(square, any_pieces) & ~black_pieces & (b->BB | b->BQ)) return 1;
+        //Si está siendo atacado por torres
+        if(rook_moves(square, any_pieces) & ~black_pieces & (b->BR | b->BQ)) return 1;
+        //Si está siendo atacada por el rey
+        if(king_move_table[square] & b->BK) return 1;
     }
-    //Si juegan blancas
+    //Si una pieza blanca está atacando esta casilla
     else{
-        //Comprobar si algún caballo está atacando al rey
-        //Casilla del rey
-        int square = get_ls1b_index(b->WK);
-        if(b->BK & knight_move_table[square]) return -1;
+        //Si la posición está atacada por un peón negro(
+        //(es lo mismo que si podriamos comer al peón con un peon blanco desde nuestra casilla)
+        if(pawn_attacks_table[WHITE][square] & b->BP) return 1;
+        //Si está siendo atacado por caballos
+        if(knight_move_table[square] & b->WK) return 1;
+
+        //Incluimos la reina en torres y alfiles para simplificarlo
+        //Si está siendo atacado por alfiles
+        if(bishop_moves(square, any_pieces) & ~white_pieces & (b->WB | b->WQ)) return 1;
+        //Si está siendo atacado por torres
+        if(rook_moves(square, any_pieces) & ~white_pieces & (b->WR | b->WQ)) return 1;
+        //Si está siendo atacada por el rey
+        if(king_move_table[square] & b->BK) return 1;
     }
 
 }

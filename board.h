@@ -1,9 +1,5 @@
-//
-// Created by anxo on 06/05/20.
-//
 #ifndef CHESSENGINEC_BOARD_H
 #define CHESSENGINEC_BOARD_H
-
 
 #define BLACK 1
 #define WHITE 0
@@ -43,7 +39,6 @@ typedef struct{
     unsigned side;
 
     //Posibilidades de enroque
-    //Bitfield : WKS,WQL,BKS,BQL in that order bits 0-3//
     unsigned castle;
 
 }board;

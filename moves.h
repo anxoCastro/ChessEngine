@@ -3,19 +3,12 @@
 #include "board.h"
 #ifndef CHESSENGINEC_MOVES_H
 #define CHESSENGINEC_MOVES_H
+
+
 //Tamaño lista movimientos
-//Después de buscar un poco he encontrado alguna posición de más de 200 movimientos en un turno
-//Pero tienen que estar coronados prácticamente todas los peones
 #define SIZE_LIST_MOVE 200
 
-//Operaciones de bit sobre el bitboard
-#define set_bit(bitboard, square) ((bitboard) |= (1ULL << (square)))
-#define get_bit(bitboard, square) ((bitboard) & (1ULL << (square)))
-#define pop_bit(bitboard, square) (get_bit(bitboard, square) ? (bitboard) ^= (1ULL << (square)) : 0)
 typedef struct move{
-    //
-    //
-    //Falta implementar promocion, ,captura, posibilidad de captura al paso...
     //Representa la casilla del(0 al 63) de origen y destino del movimiento
     unsigned char from;
     unsigned char to;
