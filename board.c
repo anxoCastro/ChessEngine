@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "board.h"
-
+#include "bitops.h"
 
 void initialize_empty_board(board *b){
     b->WP = 0;
@@ -113,8 +113,135 @@ void printBoard(board b) {
     }
     for (int i = 0; i < 8; i++) {
         //Una fila del tablero
-        printf("%i  %c %c %c %c %c %c %c %c\n",8 - i, charBoard[i][0], charBoard[i][1], charBoard[i][2],
+        printf("        %i  %c %c %c %c %c %c %c %c\n",8 - i, charBoard[i][0], charBoard[i][1], charBoard[i][2],
                charBoard[i][3], charBoard[i][4], charBoard[i][5], charBoard[i][6], charBoard[i][7]);
     }
-    printf("\n   A B C D E F G H\n");
+    printf("\n           A B C D E F G H\n");
+}
+
+void importFEN(char *fen, board *b){
+    //Dejar valores a cero por defecto
+    b->side = WHITE;
+    b->castle[0] = 0;
+    b->castle[1] = 0;
+    b->castle[2] = 0;
+    b->castle[3] = 0;
+    b->WB = 0;
+    b->enpassant_square = 0;
+    //Recorrer tablero
+    int offset;
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            int square = i * 8 + j;
+            switch (*fen) {
+                case 'P':
+                    set_bit(b->WP, square);
+                    break;
+                case 'N':
+                    set_bit(b->WN, square);
+                    break;
+                case 'B':
+                    set_bit(b->WB, square);
+                    break;
+                case 'R':
+                    set_bit(b->WR, square);
+                    break;
+                case 'Q':
+                    set_bit(b->WQ, square);
+                    break;
+                case 'K':
+                    set_bit(b->WK, square);
+                    break;
+                case 'p':
+                    set_bit(b->BP, square);
+                    break;
+                case 'n':
+                    set_bit(b->BN, square);
+                    break;
+                case 'b':
+                    set_bit(b->BB, square);
+                    break;
+                case 'r':
+                    set_bit(b->BR, square);
+                    break;
+                case 'q':
+                    set_bit(b->BQ, square);
+                    break;
+                case 'k':
+                    set_bit(b->BK, square);
+                    break;
+                case '1' ... '8':
+                    offset = *fen - '0';
+                    j += offset - 1;
+                    if(j>=8){
+                        j = j - 9;
+                        i++;
+                    }
+                    break;
+                case '/':
+                    j--;
+                    if(j == -1){
+                        i--;
+                        j = 7;
+                    }
+                    break;
+
+            }
+            *fen++;
+        }
+    }
+    //Espacio en blanco del lado que juega
+    *fen++;
+    //Marcar lado que juega
+    if(*fen == 'w') b->side = WHITE;
+    else b->side = BLACK;
+    //Saltar a enroques
+    *fen++;
+    *fen++;
+    //Setear enroques
+    while(*fen != ' '){
+        switch(*fen){
+            case 'K':
+                b->castle[0] = 1;
+                break;
+            case 'Q':
+                b->castle[1] = 1;
+                break;
+            case 'k':
+                b->castle[2] = 1;
+                break;
+            case 'q':
+                b->castle[3] = 1;
+                break;
+            case '-':
+                break;
+        }
+        *fen++;
+
+    }
+    *fen++;
+    //Captura al paso
+    if(*fen != '-'){
+        int i = fen[0] - 'a';
+        int j = 8 - (fen[1] - '0');
+        int square = i * 8 + j;
+        b->enpassant_square  = 1UL << square;
+    }
+}
+
+void print_bitboard(unsigned long b) {
+    //Convertir bitboard a caracteres
+    char charBoard[8][8] = {[0 ... 7][0 ... 7] = '-'};
+    for (int i = 0; i < 64; i++) {
+        if(((b>>i)&1)==1) {
+            charBoard[i / 8][i % 8] = '+';
+        }
+
+    }
+    //Imprimir tablero
+    for (int i = 0; i < 8; i++) {
+        //Una fila del tablero
+        printf("%c%c%c%c%c%c%c%c\n", charBoard[i][0], charBoard[i][1], charBoard[i][2],
+               charBoard[i][3], charBoard[i][4], charBoard[i][5], charBoard[i][6], charBoard[i][7]);
+    }
 }

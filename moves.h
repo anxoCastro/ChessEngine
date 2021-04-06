@@ -74,7 +74,6 @@ typedef struct unmake_stack{
     int nElements;
     }unmake_stack;
 
-void print_bitboard(unsigned long b);
 moveList *create_move_list();
 moveList *generate_legal_moves(board *b, move lastMove);
 moveList *generate_black_moves(board *b, move lastMove, moveList *mL);

@@ -45,6 +45,9 @@ typedef struct{
     //3 - Enroque largo negro
     unsigned castle[4];
 
+    //Casila de captura al paso(quizás haya que cambiar struct move)
+    unsigned long enpassant_square;
+
 }board;
 
 void initBoard(board *b);
@@ -52,4 +55,6 @@ void printBoard(board b);
 int floor_log2(unsigned long bitboard);
 unsigned char count_bits(unsigned long bitboard);
 unsigned char get_ls1b_index(unsigned long bitboard);
+void importFEN(char *fen, board *b);
+void print_bitboard(unsigned long b);
 #endif //CHESSENGINEC_BOARD_H

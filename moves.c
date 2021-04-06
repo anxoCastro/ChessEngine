@@ -81,15 +81,15 @@ unsigned long generate_pawn_attacks(int square, unsigned side){
     if(side == WHITE){
         //Omitimos las dos ultimas filas(coronación)
         if((board) & not_row_78){
-            moves |= (board>> 7);
-            moves |= (board>> 9);
+            if(board & not_column_h)moves |= (board>> 7);
+            if(board & not_column_a)moves |= (board>> 9);
         }
     }
     else{
         //Omitimos las ultimas filas (coronación)
         if((board) & not_row_12){
-            moves |= (board<< 7);
-            moves |= (board<< 9);
+            if(board & not_column_a)moves |= (board<< 7);
+            if(board & not_column_h)moves |= (board<< 9);
         }
     }
     return moves;
@@ -123,15 +123,15 @@ unsigned long generate_pawn_promotion_attacks(int square, unsigned side){
     if(side == WHITE){
         //Solo penultima fila(coronación)
         if((board) & row_7){
-            moves |= (board>> 7);
-            moves |= (board>> 9);
+            if(board & not_column_h)moves |= (board>> 7);
+            if(board & not_column_a)moves |= (board>> 9);
         }
     }
     else{
         //Solo penultima fila(coronación)
         if((board) & row_2){
-            moves |= (board<< 7);
-            moves |= (board<< 9);
+            if(board & not_column_a)moves |= (board<< 7);
+            if(board & not_column_h)moves |= (board<< 9);
         }
     }
     return moves;
@@ -351,6 +351,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
             to = from + 16;
             addElement(mL, from, to, 0, 1UL<<to, 0, 0, 0, PAWN);
         }
+
         //Captura peones
         pawn_attacks = pawn_attacks_table[BLACK][from] & white_pieces;
         while(pawn_attacks){
@@ -529,6 +530,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
             addElement(mL, from, to, 0, 1UL<<to, 0, 0, 0, PAWN);
         }
         //Captura peones
+
         pawn_attacks = pawn_attacks_table[WHITE][from] & black_pieces;
         while(pawn_attacks){
             to = get_ls1b_index(pawn_attacks);
@@ -537,6 +539,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
         }
 
         //Captura al paso
+
         if(lastMove.enpassantsquare){
             enpassant_attacks = pawn_attacks_table[WHITE][from+8] & lastMove.enpassantsquare;
             if(enpassant_attacks){
@@ -1233,22 +1236,7 @@ int is_attacked(board *b, int square, unsigned side){
 
 }
 
-void print_bitboard(unsigned long b) {
-    //Convertir bitboard a caracteres
-    char charBoard[8][8] = {[0 ... 7][0 ... 7] = '-'};
-    for (int i = 0; i < 64; i++) {
-        if(((b>>i)&1)==1) {
-            charBoard[i / 8][i % 8] = '+';
-        }
 
-    }
-    //Imprimir tablero
-    for (int i = 0; i < 8; i++) {
-        //Una fila del tablero
-        printf("%c%c%c%c%c%c%c%c\n", charBoard[i][0], charBoard[i][1], charBoard[i][2],
-               charBoard[i][3], charBoard[i][4], charBoard[i][5], charBoard[i][6], charBoard[i][7]);
-    }
-}
 
 //Convertir movimiento(notación en forma de origen + destino)
 //Falta promocion
