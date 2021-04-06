@@ -1,5 +1,7 @@
 #include "bitops.h"
 
+#include "bitops.h"
+
 int floor_log2(unsigned long bitboard)
 {
     int pos = 0;

@@ -87,7 +87,10 @@ void initBoard(board *b) {
     //Empiezan las blancas
     b->side = 0;
     //Inicializar enroques
-    b->castle = 0b00001111;
+    b->castle[0] = 1;
+    b->castle[1] = 1;
+    b->castle[2] = 1;
+    b->castle[3] = 1;
 }
 
 

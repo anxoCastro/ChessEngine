@@ -39,7 +39,11 @@ typedef struct{
     unsigned side;
 
     //Posibilidades de enroque
-    unsigned castle;
+    //0 - Enroque corto blanco
+    //1 - Enroque largo blanco
+    //2 - Enroque corto negro
+    //3 - Enroque largo negro
+    unsigned castle[4];
 
 }board;
 
