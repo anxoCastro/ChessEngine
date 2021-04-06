@@ -27,6 +27,7 @@ void perft(board *b, int depth, move lastMove, unmake_stack stack){
         if(make_legal_move(b, m->list[i], &stack) == 1){
             continue;
         }
+        lastMove = m->list[i];
         perft(b, depth - 1, lastMove, stack);
         unmake_move(b, m->list[i], &stack);
     }
@@ -44,6 +45,7 @@ void do_perft(int depth, char *fen){
     move lastMove;
     initMove(&lastMove);
     lastMove.enpassantsquare = b.enpassant_square;
+    print_bitboard(lastMove.enpassantsquare);
     moveList *m = create_move_list();
     generate_move_tables();
     char *string = malloc(sizeof(char) * 4);

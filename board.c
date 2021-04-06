@@ -224,7 +224,12 @@ void importFEN(char *fen, board *b){
     if(*fen != '-'){
         int i = fen[0] - 'a';
         int j = 8 - (fen[1] - '0');
-        int square = i * 8 + j;
+        int square = j * 8 + i;
+        if(b->side == WHITE){
+            square+=8;
+        }else{
+            square-=8;
+        }
         b->enpassant_square  = 1UL << square;
     }
 }
