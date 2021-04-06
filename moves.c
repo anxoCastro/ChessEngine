@@ -51,7 +51,16 @@ void addElement(moveList *l,unsigned char from, unsigned char  to, unsigned  cap
     l->nElements++;
 }
 
-
+void initMove(move *m){
+    m->from = 0;
+    m->to = 0;
+    m->piece = 6;
+    m->enpassantsquare = 0;
+    m->enpassant = 0;
+    m->promotion = 0;
+    m->castling = 0;
+    m->capture = 0;
+}
 //Generar movimiento de los peones(Vamos a generarlos al inicio de la ejecución del engine)
 unsigned long generate_pawn_pushes(int square, unsigned side){
     unsigned long moves = 0UL;
@@ -674,8 +683,14 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
 }
 
 //Realizar movimiento(no comprobamos si es legal o no en este momento)
-void make_move(board *b, move m, unmake_stack unmakeStack){
+void make_move(board *b, move m, unmake_stack *unmakeStack){
     unmake_info unmakeInfo;
+    unmakeInfo.castle[0] = 0;
+    unmakeInfo.castle[1] = 0;
+    unmakeInfo.castle[2] = 0;
+    unmakeInfo.castle[3] = 0;
+    unmakeInfo.capture_piece = 6;
+    unmakeInfo.capture_enpassant = 6;
     switch (m.piece) {
         case PAWN:
             if(b->side == WHITE){
@@ -935,16 +950,16 @@ void make_move(board *b, move m, unmake_stack unmakeStack){
     else b->side = WHITE;
 }
 //Hacer movimientos legales solamente
-int make_legal_move(board *b, move m, unmake_stack unmakeStack){
+int make_legal_move(board *b, move m, unmake_stack *unmakeStack){
     make_move(b, m, unmakeStack);
-    if(b->side == BLACK){
-        if(is_attacked(b, get_ls1b_index(b->WK), BLACK)) {
+if(b->side == BLACK){
+        if(is_attacked(b, get_ls1b_index(b->WK), WHITE)) {
             unmake_move(b, m, unmakeStack);
             return 1;
         }
     }
     else{
-        if(is_attacked(b, get_ls1b_index(b->BK), WHITE)) {
+    if(is_attacked(b, get_ls1b_index(b->BK), BLACK)) {
             unmake_move(b, m, unmakeStack);
             return 1;
         }
@@ -953,16 +968,20 @@ int make_legal_move(board *b, move m, unmake_stack unmakeStack){
 }
 //Deshacer movimiento
 //Funciones para pila de unmake_info
-void push_unmake(unmake_stack stack, unmake_info unmake){
-    stack.stack[++stack.nElements];
+void push_unmake(unmake_stack *stack, unmake_info unmake){
+    stack->stack[stack->nElements].capture_piece = unmake.capture_piece;
+    stack->stack[stack->nElements].capture_enpassant = unmake.capture_enpassant;
+    stack->stack[stack->nElements].castle[0] = unmake.castle[0];
+    stack->stack[stack->nElements].castle[1] = unmake.castle[1];
+    stack->nElements++;
 }
-unmake_info pop_unmake(unmake_stack stack){
-    unmake_info unmake = stack.stack[stack.nElements];
-    stack.nElements--;
+unmake_info pop_unmake(unmake_stack *stack){
+    stack->nElements--;
+    unmake_info unmake = stack->stack[stack->nElements];
     return unmake;
 }
 //Deshacer movimiento
-void unmake_move(board *b, move m, unmake_stack unmakeStack){
+void unmake_move(board *b, move m, unmake_stack *unmakeStack){
     //Cambiar turno
     if(b->side == WHITE)b->side = BLACK;
     else b->side = WHITE;
@@ -1157,7 +1176,7 @@ void unmake_move(board *b, move m, unmake_stack unmakeStack){
     //Si hay captura borramos la pieza capturada
     if(m.capture){
         if(b->side == WHITE){
-            if(unmakeInfo.capture_piece == PAWN){
+            if(unmakeInfo.capture_piece == 0){
                 set_bit(b->BP, m.to);
             }
             else if(unmakeInfo.capture_piece == KNIGHT){
@@ -1206,15 +1225,15 @@ int is_attacked(board *b, int square, unsigned side){
         //(es lo mismo que si podriamos comer al peón con un peon negro desde nuestra casilla)
         if(pawn_attacks_table[BLACK][square] & b->WP) return 1;
         //Si está siendo atacado por caballos
-        if(knight_move_table[square] & b->BK) return 1;
+        if(knight_move_table[square] & b->WN) return 1;
 
         //Incluimos la reina en torres y alfiles para simplificarlo
         //Si está siendo atacado por alfiles
-        if(bishop_moves(square, any_pieces) & ~black_pieces & (b->BB | b->BQ)) return 1;
+        if(bishop_moves(square, any_pieces) & (b->WB | b->WQ)) return 1;
         //Si está siendo atacado por torres
-        if(rook_moves(square, any_pieces) & ~black_pieces & (b->BR | b->BQ)) return 1;
+        if(rook_moves(square, any_pieces)  & (b->WR | b->WQ)) return 1;
         //Si está siendo atacada por el rey
-        if(king_move_table[square] & b->BK) return 1;
+        if(king_move_table[square] & b->WK) return 1;
     }
     //Si una pieza blanca está atacando esta casilla
     else{
@@ -1222,13 +1241,13 @@ int is_attacked(board *b, int square, unsigned side){
         //(es lo mismo que si podriamos comer al peón con un peon blanco desde nuestra casilla)
         if(pawn_attacks_table[WHITE][square] & b->BP) return 1;
         //Si está siendo atacado por caballos
-        if(knight_move_table[square] & b->WK) return 1;
+        if(knight_move_table[square] & b->BN) return 1;
 
         //Incluimos la reina en torres y alfiles para simplificarlo
         //Si está siendo atacado por alfiles
-        if(bishop_moves(square, any_pieces) & ~white_pieces & (b->WB | b->WQ)) return 1;
+        if(bishop_moves(square, any_pieces) & (b->BB | b->BQ)) return 1;
         //Si está siendo atacado por torres
-        if(rook_moves(square, any_pieces) & ~white_pieces & (b->WR | b->WQ)) return 1;
+        if(rook_moves(square, any_pieces) & (b->BR | b->BQ)) return 1;
         //Si está siendo atacada por el rey
         if(king_move_table[square] & b->BK) return 1;
     }

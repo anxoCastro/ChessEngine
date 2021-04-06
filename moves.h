@@ -20,6 +20,7 @@ typedef struct move{
     //3 rook
     //4 queen
     //5 king
+    //6 Nada
     unsigned piece;
     //Bitboard del peón donde se podrá hacer captura al paso
     unsigned long enpassantsquare;
@@ -80,10 +81,11 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL);
 moveList *generate_white_moves(board *b, move lastMove, moveList *mL);
 void move_to_string(move *m, char *string);
 int is_attacked(board *b, int square, unsigned side);
-void unmake_move(board *b, move m, struct unmake_stack unmakeStack);
-void make_move(board *b, move m, unmake_stack unmakeStack);
-int make_legal_move(board *b, move m, unmake_stack unmakeStack);
+void unmake_move(board *b, move m, struct unmake_stack *unmakeStack);
+void make_move(board *b, move m, unmake_stack *unmakeStack);
+int make_legal_move(board *b, move m, unmake_stack *unmakeStack);
 void generate_move_tables();
-void push_unmake(unmake_stack stack, unmake_info unmake);
-unmake_info pop_unmake(unmake_stack stack);
+void push_unmake(unmake_stack *stack, unmake_info unmake);
+unmake_info pop_unmake(unmake_stack *stack);
+void initMove(move *m);
 #endif //CHESSENGINEC_MOVES_H
