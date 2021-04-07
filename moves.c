@@ -369,7 +369,6 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
             pop_bit(pawn_attacks, to);
         }
 
-        //Captura al paso
         if(lastMove.enpassantsquare){
             enpassant_attacks = pawn_attacks_table[BLACK][from-8] & lastMove.enpassantsquare;
             if(enpassant_attacks){
@@ -481,9 +480,9 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     if(b->castle[2]){
         //Si no hay ninguna pieza entre rey y torre y no están siendo atacadas las casillas
         if(!get_bit(any_pieces, 5) && !get_bit(any_pieces, 6)){
-            if(!is_attacked(b, 4, BLACK) && !is_attacked(b, 5, BLACK) && !is_attacked(b, 6, BLACK)  && !is_attacked(b, 7, BLACK) ) {
-                b->castle[2] = 0;
-                b->castle[3] = 0;
+            if(!is_attacked(b, 4, BLACK) && !is_attacked(b, 5, BLACK) && !is_attacked(b, 6, BLACK)) {
+                //b->castle[2] = 0;
+                //b->castle[3] = 0;
                 addElement(mL, 4, 6, 0, 0, 0, 0, 1, KING);
             }
         }
@@ -491,10 +490,10 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     //Enroque largo negro
     if(b->castle[3]) {
         if (!get_bit(any_pieces, 1) && !get_bit(any_pieces, 2) && !get_bit(any_pieces, 3)) {
-            if (!is_attacked(b, 0, BLACK) && !is_attacked(b, 1, BLACK) && !is_attacked(b, 2, BLACK) &&
+            if (!is_attacked(b, 1, BLACK) && !is_attacked(b, 2, BLACK) &&
                 !is_attacked(b, 3, BLACK) && !is_attacked(b, 4, BLACK)) {
-                b->castle[2] = 0;
-                b->castle[3] = 0;
+                //b->castle[2] = 0;
+                //b->castle[3] = 0;
                 addElement(mL, 4, 2, 0, 0, 0, 0, 1, KING);
             }
         }
@@ -660,9 +659,9 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     if(b->castle[0]){
         //Si no hay ninguna pieza entre rey y torre y no están siendo atacadas las casillas
         if(!get_bit(any_pieces, 61) && !get_bit(any_pieces, 62)){
-            if(!is_attacked(b, 60, BLACK) && !is_attacked(b, 61, BLACK) && !is_attacked(b, 62, BLACK)  && !is_attacked(b, 63, BLACK) ) {
-                b->castle[0] = 0;
-                b->castle[1] = 0;
+            if(!is_attacked(b, 60, WHITE) && !is_attacked(b, 61, WHITE) && !is_attacked(b, 62, WHITE) ) {
+                //b->castle[0] = 0;
+                //b->castle[1] = 0;
                 addElement(mL, 60, 62, 0, 0, 0, 0, 1, KING);
             }
         }
@@ -670,10 +669,10 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     //Enroque largo blanco
     if(b->castle[1]){
         if(!get_bit(any_pieces, 57) && !get_bit(any_pieces, 58) && !get_bit(any_pieces, 59)) {
-            if (!is_attacked(b, 56, BLACK) && !is_attacked(b, 57, BLACK) && !is_attacked(b, 58, BLACK) &&
-                !is_attacked(b, 59, BLACK) && !is_attacked(b, 60, BLACK)) {
-                b->castle[1] = 0;
-                b->castle[0] = 0;
+            if (!is_attacked(b, 57, WHITE) && !is_attacked(b, 58, WHITE) &&
+                !is_attacked(b, 59, WHITE) && !is_attacked(b, 60, WHITE)) {
+                //b->castle[1] = 0;
+                //b->castle[0] = 0;
                 addElement(mL, 60, 58, 0, 0, 0, 0, 1, KING);
             }
         }
@@ -844,19 +843,15 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
                 if(m.castling){
                     //Enroque corto
                     if(m.castling == 1){
-                        if(b->castle[0]){
                             //Movemos torre
                             pop_bit(b->WR, 63);
                             set_bit(b->WR, 61);
-                        }
                     }
                     //Enroque largo
                     if(m.castling == 2){
-                        if(b->castle[1]) {
                             //Movemos torre
                             pop_bit(b->WR, 56);
                             set_bit(b->WR, 59);
-                        }
                     }
                 }
                 //Añadimos info de enroque actual a unmake
@@ -873,19 +868,15 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
                 if(m.castling){
                     //Enroque corto
                     if(m.castling == 1){
-                        if(b->castle[2]){
                             //Movemos torre
                             pop_bit(b->BR, 7);
                             set_bit(b->BR, 5);
-                        }
                     }
                     //Enroque largo
                     if(m.castling == 2){
-                        if(b->castle[3]) {
                             //Movemos torre
                             pop_bit(b->BR, 0);
                             set_bit(b->BR, 3);
-                        }
                     }
                 }
                 //Añadimos info de enroque actual a unmake
@@ -1125,7 +1116,7 @@ void unmake_move(board *b, move m, unmake_stack *unmakeStack){
                 if(m.castling){
                     //Enroque corto
                     if(m.castling == 1){
-                        if(b->castle[0]){
+                        if(unmakeInfo.castle){
                             //Movemos torre
                             set_bit(b->WR, 63);
                             pop_bit(b->WR, 61);

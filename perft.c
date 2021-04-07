@@ -15,6 +15,7 @@ void perft(board *b, int depth, move lastMove, unmake_stack stack){
         leafs++;
         return;
     }
+    char *string = malloc(sizeof(char) * 4);
     moveList *m = create_move_list();
     if(b->side == WHITE){
         m = generate_white_moves(b, lastMove, m);
@@ -27,6 +28,7 @@ void perft(board *b, int depth, move lastMove, unmake_stack stack){
             continue;
         }
         lastMove = m->list[i];
+        move_to_string(&lastMove, string);
         perft(b, depth - 1, lastMove, stack);
         unmake_move(b, m->list[i], &stack);
     }
@@ -55,6 +57,7 @@ void do_perft(int depth, char *fen){
             continue;
         }
         unsigned long cummulative_nodes = leafs;
+        lastMove = m->list[i];
         move_to_string(&m->list[i], string);
         perft(&b, depth - 1, lastMove, *stack);
         unsigned long old_nodes = leafs - cummulative_nodes;
