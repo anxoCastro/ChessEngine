@@ -6,7 +6,8 @@
 #include "perft.h"
 
 #define DEFAULT_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-#define DEPTH 6
+
+#define DEPTH 7
 int main(int argc, char *argv[]) {
     if(argc > 3){
         if(strcmp(argv[0], "fen")){

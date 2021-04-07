@@ -374,7 +374,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
             enpassant_attacks = pawn_attacks_table[BLACK][from-8] & lastMove.enpassantsquare;
             if(enpassant_attacks){
                 to = get_ls1b_index(enpassant_attacks);
-                addElement(mL, from, to, 1, 0, 1, 0, 0, PAWN);
+                addElement(mL, from, to + 8, 1, 0, 1, 0, 0, PAWN);
             }
         }
         //Promocion avanzando
@@ -408,7 +408,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
         while(aux) {
             to = get_ls1b_index(aux);
             //Si captura pieza
-            if(to && get_bit(white_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, KNIGHT);
+            if(get_bit(white_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, KNIGHT);
             else addElement(mL, from, to, 0, 0, 0, 0, 0, KNIGHT);
             pop_bit(aux, to);
         }
@@ -423,7 +423,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     while(aux) {
         to = get_ls1b_index(aux);
         //Si captura pieza
-        if(to && get_bit(white_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, KING);
+        if(get_bit(white_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, KING);
         else addElement(mL, from, to, 0, 0, 0, 0, 0, KING);
         pop_bit(aux, to);
     }
@@ -440,7 +440,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza
-            if(to && get_bit(white_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, ROOK);
+            if(get_bit(white_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, ROOK);
             else addElement(mL, from, to, 0, 0, 0, 0, 0, ROOK);
             pop_bit(aux, to);
         }
@@ -456,7 +456,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza
-            if(to && get_bit(white_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, BISHOP);
+            if(get_bit(white_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, BISHOP);
             else addElement(mL, from, to, 0, 0, 0, 0, 0, BISHOP);
             pop_bit(aux, to);
         }
@@ -471,7 +471,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza
-            if(to && get_bit(white_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, QUEEN);
+            if( get_bit(white_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, QUEEN);
             else addElement(mL, from, to, 0, 0, 0, 0, 0, QUEEN);
             pop_bit(aux, to);
         }
@@ -553,7 +553,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
             enpassant_attacks = pawn_attacks_table[WHITE][from+8] & lastMove.enpassantsquare;
             if(enpassant_attacks){
                 to = get_ls1b_index(enpassant_attacks);
-                addElement(mL, from, to, 1, 0, 1, 0, 0, PAWN);
+                addElement(mL, from, to - 8, 1, 0, 1, 0, 0, PAWN);
             }
         }
         //Promocion avanzando
@@ -588,7 +588,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
         while(aux) {
             to = get_ls1b_index(aux);
             //Si captura pieza
-            if(to && get_bit(black_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, KNIGHT);
+            if(get_bit(black_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, KNIGHT);
             else addElement(mL, from, to, 0, 0, 0, 0, 0, KNIGHT);
             pop_bit(aux, to);
         }
@@ -603,7 +603,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     while(aux) {
         to = get_ls1b_index(aux);
         //Si captura pieza
-        if(to && get_bit(black_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, KING);
+        if(get_bit(black_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, KING);
         else addElement(mL, from, to, 0, 0, 0, 0, 0, KING);
         pop_bit(aux, to);
     }
@@ -620,7 +620,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza
-            if(to && get_bit(black_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, ROOK);
+            if(get_bit(black_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, ROOK);
             else addElement(mL, from, to, 0, 0, 0, 0, 0, ROOK);
             pop_bit(aux, to);
         }
@@ -636,7 +636,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza
-            if(to && get_bit(black_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, BISHOP);
+            if(get_bit(black_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, BISHOP);
             else addElement(mL, from, to, 0, 0, 0, 0, 0, BISHOP);
             pop_bit(aux, to);
         }
@@ -651,7 +651,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza
-            if(to && get_bit(black_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, QUEEN);
+            if(get_bit(black_pieces, to)) addElement(mL, from, to, 1, 0, 0, 0, 0, QUEEN);
             else addElement(mL, from, to, 0, 0, 0, 0, 0, QUEEN);
             pop_bit(aux, to);
         }

@@ -15,7 +15,6 @@ void perft(board *b, int depth, move lastMove, unmake_stack stack){
         leafs++;
         return;
     }
-    char *string = malloc(sizeof(char) * 4);
     moveList *m = create_move_list();
     if(b->side == WHITE){
         m = generate_white_moves(b, lastMove, m);
@@ -45,7 +44,6 @@ void do_perft(int depth, char *fen){
     move lastMove;
     initMove(&lastMove);
     lastMove.enpassantsquare = b.enpassant_square;
-    print_bitboard(lastMove.enpassantsquare);
     moveList *m = create_move_list();
     generate_move_tables();
     char *string = malloc(sizeof(char) * 4);
