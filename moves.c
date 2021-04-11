@@ -463,8 +463,10 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     }
 
     //Reina negra
-    if(b->BQ){
-        from = get_ls1b_index(b->BQ);
+    //Alfiles negros
+    unsigned long BQ = b->BQ;
+    while(BQ){
+        from = get_ls1b_index(BQ);
         //Calculamos los movimientos de la reina
         aux = (bishop_moves(from, any_pieces) | rook_moves(from, any_pieces)) & ~black_pieces;
         while(aux){
@@ -474,6 +476,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
             else addElement(mL, from, to, 0, 0, 0, 0, 0, QUEEN);
             pop_bit(aux, to);
         }
+        pop_bit(BQ, from);
     }
 
     //Enroque negro corto
@@ -490,11 +493,11 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     //Enroque largo negro
     if(b->castle[3]) {
         if (!get_bit(any_pieces, 1) && !get_bit(any_pieces, 2) && !get_bit(any_pieces, 3)) {
-            if (!is_attacked(b, 1, BLACK) && !is_attacked(b, 2, BLACK) &&
+            if (!is_attacked(b, 2, BLACK) &&
                 !is_attacked(b, 3, BLACK) && !is_attacked(b, 4, BLACK)) {
                 //b->castle[2] = 0;
                 //b->castle[3] = 0;
-                addElement(mL, 4, 2, 0, 0, 0, 0, 1, KING);
+                addElement(mL, 4, 2, 0, 0, 0, 0, 2, KING);
             }
         }
     }
@@ -643,8 +646,9 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     }
 
     //Reina blanca
-    if(b->WQ){
-        from = get_ls1b_index(b->WQ);
+    unsigned long WQ = b->WQ;
+    while(WQ){
+        from = get_ls1b_index(WQ);
         //Calculamos los movimientos de la reina
         aux = (bishop_moves(from, any_pieces) | rook_moves(from, any_pieces)) & ~white_pieces;
         while(aux){
@@ -654,14 +658,13 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
             else addElement(mL, from, to, 0, 0, 0, 0, 0, QUEEN);
             pop_bit(aux, to);
         }
+        pop_bit(WQ, from);
     }
     //Enroque blanco corto
     if(b->castle[0]){
         //Si no hay ninguna pieza entre rey y torre y no están siendo atacadas las casillas
         if(!get_bit(any_pieces, 61) && !get_bit(any_pieces, 62)){
             if(!is_attacked(b, 60, WHITE) && !is_attacked(b, 61, WHITE) && !is_attacked(b, 62, WHITE) ) {
-                //b->castle[0] = 0;
-                //b->castle[1] = 0;
                 addElement(mL, 60, 62, 0, 0, 0, 0, 1, KING);
             }
         }
@@ -669,11 +672,9 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     //Enroque largo blanco
     if(b->castle[1]){
         if(!get_bit(any_pieces, 57) && !get_bit(any_pieces, 58) && !get_bit(any_pieces, 59)) {
-            if (!is_attacked(b, 57, WHITE) && !is_attacked(b, 58, WHITE) &&
+            if (!is_attacked(b, 58, WHITE) &&
                 !is_attacked(b, 59, WHITE) && !is_attacked(b, 60, WHITE)) {
-                //b->castle[1] = 0;
-                //b->castle[0] = 0;
-                addElement(mL, 60, 58, 0, 0, 0, 0, 1, KING);
+                addElement(mL, 60, 58, 0, 0, 0, 0, 2, KING);
             }
         }
     }
@@ -717,23 +718,7 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
                 if(m.enpassant){
                     if(get_bit(b->BP, m.to + 8)){
                         pop_bit(b->BP, m.to + 8);
-                        unmakeInfo.capture_enpassant = PAWN;
-                    }
-                    else if(get_bit(b->BN, m.to + 8)){
-                        pop_bit(b->BN, m.to + 8);
-                        unmakeInfo.capture_enpassant = KNIGHT;
-                    }
-                    else if(get_bit(b->BB, m.to + 8)){
-                        pop_bit(b->BB, m.to + 8);
-                        unmakeInfo.capture_enpassant = BISHOP;
-                    }
-                    else if(get_bit(b->BR, m.to + 8)){
-                        pop_bit(b->BR, m.to + 8);
-                        unmakeInfo.capture_enpassant = ROOK;
-                    }
-                    else if(get_bit(b->BQ, m.to + 8)){
-                        pop_bit(b->BQ, m.to + 8);
-                        unmakeInfo.capture_enpassant = QUEEN;
+                        unmakeInfo.capture_enpassant = 1;
                     }
                 }
             }
@@ -742,7 +727,7 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
                 set_bit(b->BP, m.to);
                 //Si es una promoción transformar la pieza
                 if(m.promotion){
-                    pop_bit(b->WP, m.to);
+                    pop_bit(b->BP, m.to);
                     switch (m.promotion) {
                         case KNIGHT:
                             set_bit(b->BN, m.to);
@@ -762,23 +747,7 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
                 if(m.enpassant){
                     if(get_bit(b->WP, m.to - 8)){
                         pop_bit(b->WP, m.to - 8);
-                        unmakeInfo.capture_enpassant = PAWN;
-                    }
-                    else if(get_bit(b->WN, m.to - 8)){
-                        pop_bit(b->WN, m.to - 8);
-                        unmakeInfo.capture_enpassant = KNIGHT;
-                    }
-                    else if(get_bit(b->WB, m.to - 8)){
-                        pop_bit(b->WB, m.to - 8);
-                        unmakeInfo.capture_enpassant = BISHOP;
-                    }
-                    else if(get_bit(b->WR, m.to - 8)){
-                        pop_bit(b->WR, m.to - 8);
-                        unmakeInfo.capture_enpassant = ROOK;
-                    }
-                    else if(get_bit(b->WQ, m.to - 8)){
-                        pop_bit(b->WQ, m.to - 8);
-                        unmakeInfo.capture_enpassant = QUEEN;
+                        unmakeInfo.capture_enpassant = 1;
                     }
                 }
             }
@@ -809,18 +778,18 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
                 unmakeInfo.castle[0] = b->castle[0];
                 unmakeInfo.castle[1] = b->castle[1];
                 //Quitamos enroques
-                if(get_bit(b->WR, m.from) == 56)b->castle[1] = 0;
-                if(get_bit(b->WR, m.from) == 63)b->castle[0] = 0;
+                if(m.from == 56)b->castle[1] = 0;
+                if(m.from == 63)b->castle[0] = 0;
                 pop_bit(b->WR, m.from);
                 set_bit(b->WR, m.to);
             }
             else{
                 //Añadimos info de enroque actual a unmake
-                unmakeInfo.castle[0] = b->castle[2];
-                unmakeInfo.castle[1] = b->castle[3];
+                unmakeInfo.castle[2] = b->castle[2];
+                unmakeInfo.castle[3] = b->castle[3];
                 //Quitamos enroques
-                if(get_bit(b->WR, m.from) == 0)b->castle[3] = 0;
-                if(get_bit(b->WR, m.from) == 7)b->castle[2] = 0;
+                if(m.from == 0)b->castle[3] = 0;
+                if(m.from == 7)b->castle[2] = 0;
                 pop_bit(b->BR, m.from);
                 set_bit(b->BR, m.to);
             }
@@ -836,7 +805,10 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
             }
             break;
         case KING:
-            if(b->side == WHITE){
+            if( b->side == WHITE){
+                //Añadimos info de enroque actual a unmake
+                unmakeInfo.castle[0] = b->castle[0];
+                unmakeInfo.castle[1] = b->castle[1];
                 pop_bit(b->WK, m.from);
                 set_bit(b->WK, m.to);
                 //Enroque
@@ -854,14 +826,14 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
                             set_bit(b->WR, 59);
                     }
                 }
-                //Añadimos info de enroque actual a unmake
-                unmakeInfo.castle[0] = b->castle[0];
-                unmakeInfo.castle[1] = b->castle[1];
                 //Quitamos enroques
                 b->castle[0] = 0;
                 b->castle[1] = 0;
             }
             else{
+                //Añadimos info de enroque actual a unmake
+                unmakeInfo.castle[2] = b->castle[2];
+                unmakeInfo.castle[3] = b->castle[3];
                 pop_bit(b->BK, m.from);
                 set_bit(b->BK, m.to);
                 //Enroque
@@ -879,9 +851,6 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
                             set_bit(b->BR, 3);
                     }
                 }
-                //Añadimos info de enroque actual a unmake
-                unmakeInfo.castle[0] = b->castle[2];
-                unmakeInfo.castle[1] = b->castle[3];
                 b->castle[2] = 0;
                 b->castle[3] = 0;
             }
@@ -904,6 +873,10 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
             }
             else if(get_bit(b->BR, m.to)){
                 pop_bit(b->BR, m.to);
+                unmakeInfo.castle[2] = b->castle[2];
+                unmakeInfo.castle[3] = b->castle[3];
+                if(m.to == 0)b->castle[3] = 0;
+                if(m.to == 7)b->castle[2] = 0;
                 unmakeInfo.capture_piece = ROOK;
             }
             else if(get_bit(b->BQ, m.to)){
@@ -925,6 +898,10 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
                 unmakeInfo.capture_piece = BISHOP;
             }
             else if(get_bit(b->WR, m.to)){
+                unmakeInfo.castle[0] = b->castle[0];
+                unmakeInfo.castle[1] = b->castle[1];
+                if(m.to == 56)b->castle[1] = 0;
+                if(m.to == 63)b->castle[0] = 0;
                 pop_bit(b->WR, m.to);
                 unmakeInfo.capture_piece = ROOK;
             }
@@ -964,6 +941,8 @@ void push_unmake(unmake_stack *stack, unmake_info unmake){
     stack->stack[stack->nElements].capture_enpassant = unmake.capture_enpassant;
     stack->stack[stack->nElements].castle[0] = unmake.castle[0];
     stack->stack[stack->nElements].castle[1] = unmake.castle[1];
+    stack->stack[stack->nElements].castle[2] = unmake.castle[2];
+    stack->stack[stack->nElements].castle[3] = unmake.castle[3];
     stack->nElements++;
 }
 unmake_info pop_unmake(unmake_stack *stack){
@@ -1002,24 +981,7 @@ void unmake_move(board *b, move m, unmake_stack *unmakeStack){
                 }
                 //Si hay captura al paso recuperamos la pieza capturada
                 if(m.enpassant){
-                    if(unmakeInfo.capture_enpassant == PAWN){
-                        set_bit(b->BP, m.to + 8);
-                        unmakeInfo.capture_enpassant = PAWN;
-                    }
-                    else if(unmakeInfo.capture_enpassant == KNIGHT){
-                        set_bit(b->BN, m.to + 8);
-
-                    }
-                    else if(unmakeInfo.capture_enpassant == BISHOP){
-                        set_bit(b->BB, m.to + 8);
-                    }
-                    else if(unmakeInfo.capture_enpassant == ROOK){
-                        set_bit(b->BR, m.to + 8);
-                        ;
-                    }
-                    else if(unmakeInfo.capture_enpassant == QUEEN){
-                        set_bit(b->BQ, m.to + 8);
-                    }
+                    set_bit(b->BP, m.to + 8);
                 }
             }
             else{
@@ -1044,21 +1006,7 @@ void unmake_move(board *b, move m, unmake_stack *unmakeStack){
                 }
                 //Si hay captura al paso recuperamos la pieza capturada
                 if(m.enpassant){
-                    if(unmakeInfo.capture_enpassant == PAWN){
                         set_bit(b->WP, m.to - 8);
-                    }
-                    else if(unmakeInfo.capture_enpassant == KNIGHT){
-                        set_bit(b->WN, m.to - 8);
-                    }
-                    else if(unmakeInfo.capture_enpassant == BISHOP){
-                        set_bit(b->WB, m.to - 8);
-                    }
-                    else if(unmakeInfo.capture_enpassant == ROOK){
-                        set_bit(b->WR, m.to - 8);
-                    }
-                    else if(unmakeInfo.capture_enpassant == QUEEN){
-                        set_bit(b->WQ, m.to - 8);
-                    }
                 }
             }
             break;
@@ -1092,8 +1040,8 @@ void unmake_move(board *b, move m, unmake_stack *unmakeStack){
             }
             else{
                 //Recuperamos info de enroque actual de unmake
-                b->castle[2] = unmakeInfo.castle[0];
-                b->castle[3] = unmakeInfo.castle[1];
+                b->castle[2] = unmakeInfo.castle[2];
+                b->castle[3] = unmakeInfo.castle[3];
                 set_bit(b->BR, m.from);
                 pop_bit(b->BR, m.to);
             }
@@ -1110,40 +1058,38 @@ void unmake_move(board *b, move m, unmake_stack *unmakeStack){
             break;
         case KING:
             if(b->side == WHITE){
+                //Recuperamos info de enroque actual
+                b->castle[0] = unmakeInfo.castle[0];
+                b->castle[1] = unmakeInfo.castle[1];
                 set_bit(b->WK, m.from);
                 pop_bit(b->WK, m.to);
                 //Enroque
                 if(m.castling){
                     //Enroque corto
                     if(m.castling == 1){
-                        if(unmakeInfo.castle){
                             //Movemos torre
                             set_bit(b->WR, 63);
                             pop_bit(b->WR, 61);
-                        }
                     }
                     //Enroque largo
                     if(m.castling == 2){
-                        if(b->castle[1]) {
                             //Movemos torre
                             set_bit(b->WR, 56);
                             pop_bit(b->WR, 59);
-                        }
                     }
                 }
-                //Recuperamos info de enroque actual
-                b->castle[0] = unmakeInfo.castle[0];
-                b->castle[1] = unmakeInfo.castle[1];
-
             }
             else{
+                //Recuperamos info de enroque actual
+                b->castle[2] = unmakeInfo.castle[2];
+                b->castle[3] = unmakeInfo.castle[3];
                 set_bit(b->BK, m.from);
                 pop_bit(b->BK, m.to);
                 //Enroque
                 if(m.castling){
                     //Enroque corto
                     if(m.castling == 1){
-                        if(b->castle[2]){
+                        if(unmakeInfo.castle[2]) {
                             //Movemos torre
                             set_bit(b->BR, 7);
                             pop_bit(b->BR, 5);
@@ -1151,23 +1097,19 @@ void unmake_move(board *b, move m, unmake_stack *unmakeStack){
                     }
                     //Enroque largo
                     if(m.castling == 2){
-                        if(b->castle[3]) {
+                        if(unmakeInfo.castle[3])
                             //Movemos torre
                             set_bit(b->BR, 0);
                             pop_bit(b->BR, 3);
-                        }
                     }
                 }
-                //Recuperamos info de enroque actual
-                b->castle[2] = unmakeInfo.castle[0];
-                b->castle[3] = unmakeInfo.castle[1];
             }
             break;
     }
-    //Si hay captura borramos la pieza capturada
+    //Si hay captura recuperamos la pieza capturada
     if(m.capture){
         if(b->side == WHITE){
-            if(unmakeInfo.capture_piece == 0){
+            if(unmakeInfo.capture_piece == PAWN){
                 set_bit(b->BP, m.to);
             }
             else if(unmakeInfo.capture_piece == KNIGHT){
@@ -1177,6 +1119,8 @@ void unmake_move(board *b, move m, unmake_stack *unmakeStack){
                 set_bit(b->BB, m.to);
             }
             else if(unmakeInfo.capture_piece == ROOK){
+                b->castle[2] = unmakeInfo.castle[2];
+                b->castle[3] = unmakeInfo.castle[3];
                 set_bit(b->BR, m.to);
             }
             else if(unmakeInfo.capture_piece == QUEEN){
@@ -1195,6 +1139,8 @@ void unmake_move(board *b, move m, unmake_stack *unmakeStack){
             }
             else if(unmakeInfo.capture_piece == ROOK){
                 set_bit(b->WR, m.to);
+                b->castle[0] = unmakeInfo.castle[0];
+                b->castle[1] = unmakeInfo.castle[1];
             }
             else if(unmakeInfo.capture_piece == QUEEN){
                 set_bit(b->WQ, m.to);
@@ -1252,11 +1198,28 @@ int is_attacked(board *b, int square, unsigned side){
 //Falta promocion
 void move_to_string(move *m, char *string){
     //Origen
-    string[0] = 'a' + (m->from % 8);
-    string[1]  = '1' + 7 - (m->from / 8);
+    *string++ = 'a' + (m->from % 8);
+    *string++  = '1' + 7 - (m->from / 8);
     //Destino
-    string[2] = 'a' + (m->to % 8);
-    string[3] = '1' + 7 - (m->to / 8);
+    *string++ = 'a' + (m->to % 8);
+    *string++ = '1' + 7 - (m->to / 8);
+    if(m->promotion){
+        if(m->promotion == 1){
+            *string = 'n';
+        }
+        if(m->promotion == 2){
+            *string = 'b';
+        }
+        if(m->promotion == 3){
+            *string = 'r';
+        }
+        if(m->promotion == 4){
+            *string = 'q';
+        }
+    }
+    else{
+        *string = NULL;
+    }
 }
 
 void string_to_move(char *string, move *m){

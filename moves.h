@@ -55,9 +55,11 @@ typedef struct moveList{
 
 //Estructura con información para poder deshacer movimiento
 typedef struct unmake_info{
-    //0 enroque corto
-    //1 enroque largo
-    unsigned castle[2];
+    //0 enroque corto blancas
+    //1 enroque largo blancas
+    //0 enroque corto negras
+    //1 enroque largo negras
+    unsigned castle[4];
     //Pieza capturada(en función de captura normal o captura al paso)
     //0 pawn
     //1 knight

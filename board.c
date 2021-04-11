@@ -85,7 +85,7 @@ void initBoard(board *b) {
         }
     };
     //Empiezan las blancas
-    b->side = 0;
+    b->side = WHITE;
     //Inicializar enroques
     b->castle[0] = 1;
     b->castle[1] = 1;
@@ -116,7 +116,9 @@ void printBoard(board b) {
         printf("        %i  %c %c %c %c %c %c %c %c\n",8 - i, charBoard[i][0], charBoard[i][1], charBoard[i][2],
                charBoard[i][3], charBoard[i][4], charBoard[i][5], charBoard[i][6], charBoard[i][7]);
     }
-    printf("\n           A B C D E F G H\n");
+    printf("\n           A B C D E F G H\n\n");
+    printf("White castling: %u %u\n", b.castle[0], b.castle[1]);
+    printf("Black castling: %u %u\n", b.castle[2], b.castle[3]);
 }
 
 void importFEN(char *fen, board *b){
@@ -126,7 +128,18 @@ void importFEN(char *fen, board *b){
     b->castle[1] = 0;
     b->castle[2] = 0;
     b->castle[3] = 0;
+    b->WP = 0;
     b->WB = 0;
+    b->WN = 0;
+    b->WR = 0;
+    b->WQ = 0;
+    b->WK = 0;
+    b->BP = 0;
+    b->BB = 0;
+    b->BN = 0;
+    b->BR = 0;
+    b->BQ = 0;
+    b->BK = 0;
     b->enpassant_square = 0;
     //Recorrer tablero
     int offset;
