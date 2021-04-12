@@ -7,6 +7,7 @@
 #include "perft.h"
 #include "moves.h"
 #include "board.h"
+#include "bitops.h"
 #include <string.h>
 #include <sys/time.h>
 unsigned long leafs;
@@ -21,7 +22,6 @@ void perft(board *b, int depth, move lastMove, unmake_stack stack){
         leafs++;
         return;
     }
-    //char *string = malloc(sizeof(char) * 5);
     moveList *m = create_move_list();
     if(b->side == WHITE){
         m = generate_white_moves(b, lastMove, m);
@@ -30,7 +30,6 @@ void perft(board *b, int depth, move lastMove, unmake_stack stack){
         m = generate_black_moves(b, lastMove, m);
     }
     for(int i = 0; i < m->nElements; i++){
-        //move_to_string(&m->list[i], string);
         if(make_legal_move(b, m->list[i], &stack) == 1){
             continue;
         }
@@ -53,6 +52,7 @@ void do_perft(int depth, char *fen){
     long start = get_time_ms();
     moveList *m = create_move_list();
     generate_move_tables();
+
     char *string = malloc(sizeof(char) * 5);
     if(b.side == WHITE)m = generate_white_moves(&b, lastMove, m);
     else m = generate_black_moves(&b, lastMove, m);

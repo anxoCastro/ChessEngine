@@ -1,6 +1,7 @@
 //
 // Created by anxo on 07/05/20.
 #include "board.h"
+#include "magic_bitboards.h"
 #ifndef CHESSENGINEC_MOVES_H
 #define CHESSENGINEC_MOVES_H
 

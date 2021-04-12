@@ -3,6 +3,7 @@
 #include "bitops.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "magic_bitboards.h"
 
 //Constantes de bitboards equivalentes a partes del tablero utiles para hacer operaciones
 
@@ -23,8 +24,6 @@ unsigned long any_pieces;
 //Tablas con los movimientos de las piezas
 unsigned long knight_move_table[64];
 unsigned long king_move_table[64];
-unsigned long rook_mask_table[64];
-unsigned long bishop_mask_table[64];
 //En el caso de los peones cada color tiene sus propias tablas
 unsigned long pawn_pushes_table[2][64];
 unsigned long pawn_attacks_table[2][64];
@@ -184,50 +183,17 @@ unsigned long generate_king_moves(int square){
 }
 
 
-//Generar patrones de ataques de torres y alfiles para cada casilla
-
-//Generar mascara movimientos torre
-unsigned long generate_rook_mask(int square){
-    unsigned long moves = 0UL;
-    int i;
-
-    //Calcular fila y columna
-    int f = square / 8;
-    int c = square % 8;
-
-    // Generar movimientos torre
-    for (i = f + 1; i <= 6; i++) moves |= (1ULL << (i * 8 + c));
-    for (i = f - 1; i >= 1; i--) moves |= (1ULL << (i * 8 + c));
-    for (i = c + 1; i <= 6; i++) moves |= (1ULL << (f * 8 + i));
-    for (i = c - 1; i >= 1; i--) moves |= (1ULL << (f * 8 + i));
-
-    return moves;
-
-};
-
-//Generar mascara movimientos alfil
-unsigned long generate_bishop_mask(int square){
-    unsigned char moves = 0ULL;
-    int rk = square/8, fl = square%8, r, f;
-
-    for (r=rk+1, f=fl+1; r<=6 && f<=6; r++, f++) moves |= (1ULL << (f + r*8));
-    for (r=rk+1, f=fl-1; r<=6 && f>=1; r++, f--) moves |= (1ULL << (f + r*8));
-    for (r=rk-1, f=fl+1; r>=1 && f<=6; r--, f++) moves |= (1ULL << (f + r*8));
-    for (r=rk-1, f=fl-1; r>=1 && f>=1; r--, f--) moves |= (1ULL << (f + r*8));
-
-    return moves;
-
-
-}
-
 //Generar tablas para la generación de los movimientos
 void generate_move_tables(){
+    //Iniciamos tablas de magic bitboards
+    init_sliders_attacks(1);
+    init_sliders_attacks(0);
     //Generamos tabla de ataque de caballos, rey
     for(int i = 0; i < 64; i++){
         knight_move_table[i] = generate_knight_moves(i);
         king_move_table[i] = generate_king_moves(i);
-        rook_mask_table[i] = generate_rook_mask(i);
-        bishop_mask_table[i] = generate_bishop_mask(i);
+        //rook_mask_table[i] = generate_rook_mask(i);
+        //bishop_mask_table[i] = generate_bishop_mask(i);
         pawn_pushes_table[WHITE][i] = generate_pawn_pushes(i, WHITE);
         pawn_pushes_table[BLACK][i] = generate_pawn_pushes(i, BLACK);
         pawn_attacks_table[WHITE][i] = generate_pawn_attacks(i, WHITE);
@@ -435,7 +401,8 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     while(BR){
         from = get_ls1b_index(BR);
         //Calculamos los posibles movimientos de la torre
-        aux = rook_moves(from, any_pieces) & ~black_pieces;
+        //aux = rook_moves(from, any_pieces) & ~black_pieces;
+        aux = get_rook_attacks(from, any_pieces) & ~black_pieces;
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza
@@ -451,7 +418,8 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     while(BB){
         from = get_ls1b_index(BB);
         //Calculamos los posibles movimientos de la torre
-        aux = bishop_moves(from, any_pieces) & ~black_pieces;
+        //aux = bishop_moves(from, any_pieces) & ~black_pieces;
+        aux = get_bishop_attacks(from, any_pieces) & ~black_pieces;
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza
@@ -468,7 +436,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     while(BQ){
         from = get_ls1b_index(BQ);
         //Calculamos los movimientos de la reina
-        aux = (bishop_moves(from, any_pieces) | rook_moves(from, any_pieces)) & ~black_pieces;
+        aux = (get_bishop_attacks(from, any_pieces) | get_rook_attacks(from, any_pieces)) & ~black_pieces;
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza
@@ -618,7 +586,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     while(WR){
         from = get_ls1b_index(WR);
         //Calculamos los posibles movimientos de la torre
-        aux = rook_moves(from, any_pieces) & ~white_pieces;
+        aux = get_rook_attacks(from, any_pieces) & ~white_pieces;
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza
@@ -633,8 +601,8 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     unsigned long WB = b->WB;
     while(WB){
         from = get_ls1b_index(WB);
-        //Calculamos los posibles movimientos de la torre
-        aux = bishop_moves(from, any_pieces) & ~white_pieces;
+        //Calculamos los posibles movimientos de los alfiles
+        aux = get_bishop_attacks(from, any_pieces) & ~white_pieces;
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza
@@ -650,7 +618,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     while(WQ){
         from = get_ls1b_index(WQ);
         //Calculamos los movimientos de la reina
-        aux = (bishop_moves(from, any_pieces) | rook_moves(from, any_pieces)) & ~white_pieces;
+        aux = (get_bishop_attacks(from, any_pieces) | get_rook_attacks(from, any_pieces)) & ~white_pieces;
         while(aux){
             to = get_ls1b_index(aux);
             //Si captura pieza

@@ -1,7 +1,5 @@
 #include "bitops.h"
 
-#include "bitops.h"
-
 int floor_log2(unsigned long bitboard)
 {
     int pos = 0;
@@ -36,4 +34,29 @@ unsigned char get_ls1b_index(unsigned long bitboard)
         return count_bits((bitboard & -bitboard) - 1);
     }
     else return 255;
+}
+
+// set occupancies
+unsigned long set_occupancy(int index, int bits_in_mask, unsigned long attack_mask)
+{
+    // occupancy map
+    unsigned long occupancy = 0ULL;
+
+    // loop over the range of bits within attack mask
+    for (int count = 0; count < bits_in_mask; count++)
+    {
+        // get LS1B index of attacks mask
+        int square = get_ls1b_index(attack_mask);
+
+        // pop LS1B in attack map
+        pop_bit(attack_mask, square);
+
+        // make sure occupancy is on board
+        if (index & (1 << count))
+            // populate occupancy map
+            occupancy |= (1ULL << square);
+    }
+
+    // return occupancy map
+    return occupancy;
 }
