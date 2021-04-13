@@ -7,11 +7,11 @@
 #include "perft.h"
 #include "moves.h"
 #include "board.h"
-#include "bitops.h"
 #include <string.h>
 #include <sys/time.h>
+
 unsigned long leafs;
-//unmake_stack stack;
+
 long get_time_ms() {
     struct timeval time_value;
     gettimeofday(&time_value, NULL);
@@ -49,9 +49,9 @@ void do_perft(int depth, char *fen){
     move lastMove;
     initMove(&lastMove);
     lastMove.enpassantsquare = b.enpassant_square;
+    generate_move_tables();
     long start = get_time_ms();
     moveList *m = create_move_list();
-    generate_move_tables();
 
     char *string = malloc(sizeof(char) * 5);
     if(b.side == WHITE)m = generate_white_moves(&b, lastMove, m);

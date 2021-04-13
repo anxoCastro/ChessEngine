@@ -79,7 +79,6 @@ typedef struct unmake_stack{
     }unmake_stack;
 
 moveList *create_move_list();
-moveList *generate_legal_moves(board *b, move lastMove);
 moveList *generate_black_moves(board *b, move lastMove, moveList *mL);
 moveList *generate_white_moves(board *b, move lastMove, moveList *mL);
 void move_to_string(move *m, char *string);

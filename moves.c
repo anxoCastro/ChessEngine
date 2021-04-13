@@ -6,7 +6,6 @@
 #include "magic_bitboards.h"
 
 //Constantes de bitboards equivalentes a partes del tablero utiles para hacer operaciones
-
 const unsigned long not_column_a = 18374403900871474942ULL;
 const unsigned long not_column_h = 9187201950435737471ULL;
 const unsigned long not_column_hg = 4557430888798830399ULL;
@@ -15,8 +14,6 @@ const unsigned long row_2 = 71776119061217280UL;
 const unsigned long row_7 = 65280UL;
 const unsigned long not_row_12 = 281474976710655UL;
 const unsigned long not_row_78 = 18446744073709486080UL;
-const unsigned long not_row_1 = 72057594037927935UL;
-const unsigned long not_row_8 = 18446744073709551360UL;
 unsigned long black_pieces;
 unsigned long white_pieces;
 unsigned long any_pieces;
@@ -29,6 +26,7 @@ unsigned long pawn_pushes_table[2][64];
 unsigned long pawn_attacks_table[2][64];
 unsigned long pawn_promotion_pushes_table[2][64];
 unsigned long pawn_promotion_attacks_table[2][64];
+
 //Inicializa una lista de movimientos
 moveList *create_move_list(){
     moveList *list = malloc(sizeof(moveList));
@@ -59,6 +57,27 @@ void initMove(move *m){
     m->promotion = 0;
     m->castling = 0;
     m->capture = 0;
+}
+
+
+//Funciones para pila de unmake_info
+
+//Meter en la pila
+void push_unmake(unmake_stack *stack, unmake_info unmake){
+    stack->stack[stack->nElements].capture_piece = unmake.capture_piece;
+    stack->stack[stack->nElements].capture_enpassant = unmake.capture_enpassant;
+    stack->stack[stack->nElements].castle[0] = unmake.castle[0];
+    stack->stack[stack->nElements].castle[1] = unmake.castle[1];
+    stack->stack[stack->nElements].castle[2] = unmake.castle[2];
+    stack->stack[stack->nElements].castle[3] = unmake.castle[3];
+    stack->nElements++;
+}
+
+//Sacar de ella
+unmake_info pop_unmake(unmake_stack *stack){
+    stack->nElements--;
+    unmake_info unmake = stack->stack[stack->nElements];
+    return unmake;
 }
 //Generar movimiento de los peones(Vamos a generarlos al inicio de la ejecución del engine)
 unsigned long generate_pawn_pushes(int square, unsigned side){
@@ -188,12 +207,11 @@ void generate_move_tables(){
     //Iniciamos tablas de magic bitboards
     init_sliders_attacks(1);
     init_sliders_attacks(0);
-    //Generamos tabla de ataque de caballos, rey
+
+    //Generamos tabla de ataque de caballos, rey, peones
     for(int i = 0; i < 64; i++){
         knight_move_table[i] = generate_knight_moves(i);
         king_move_table[i] = generate_king_moves(i);
-        //rook_mask_table[i] = generate_rook_mask(i);
-        //bishop_mask_table[i] = generate_bishop_mask(i);
         pawn_pushes_table[WHITE][i] = generate_pawn_pushes(i, WHITE);
         pawn_pushes_table[BLACK][i] = generate_pawn_pushes(i, BLACK);
         pawn_attacks_table[WHITE][i] = generate_pawn_attacks(i, WHITE);
@@ -283,15 +301,6 @@ unsigned long rook_moves(int square, unsigned long all_pieces)
     return moves;
 }
 
-//Pendiente de implementar
-moveList *generate_legal_moves(board *b, move lastMove){
-    if(b->side == BLACK){
-        //generate_black_moves(b, lastMove, );
-    }
-    else{
-        //generate_white_moves(b, lastMove);
-    }
-}
 
 moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     //Creamos la lista
@@ -393,15 +402,11 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
         pop_bit(aux, to);
     }
 
-    /*Aquí usaríamos magic bitboards para calcular los movimientos pero por ahora voy a dejarlo así*/
-    /*Por ahora se calcula en tiempo de ejecución*/
     //Torres negras
-
     unsigned long BR = b->BR;
     while(BR){
         from = get_ls1b_index(BR);
         //Calculamos los posibles movimientos de la torre
-        //aux = rook_moves(from, any_pieces) & ~black_pieces;
         aux = get_rook_attacks(from, any_pieces) & ~black_pieces;
         while(aux){
             to = get_ls1b_index(aux);
@@ -418,7 +423,6 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     while(BB){
         from = get_ls1b_index(BB);
         //Calculamos los posibles movimientos de la torre
-        //aux = bishop_moves(from, any_pieces) & ~black_pieces;
         aux = get_bishop_attacks(from, any_pieces) & ~black_pieces;
         while(aux){
             to = get_ls1b_index(aux);
@@ -431,7 +435,6 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     }
 
     //Reina negra
-    //Alfiles negros
     unsigned long BQ = b->BQ;
     while(BQ){
         from = get_ls1b_index(BQ);
@@ -452,8 +455,6 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
         //Si no hay ninguna pieza entre rey y torre y no están siendo atacadas las casillas
         if(!get_bit(any_pieces, 5) && !get_bit(any_pieces, 6)){
             if(!is_attacked(b, 4, BLACK) && !is_attacked(b, 5, BLACK) && !is_attacked(b, 6, BLACK)) {
-                //b->castle[2] = 0;
-                //b->castle[3] = 0;
                 addElement(mL, 4, 6, 0, 0, 0, 0, 1, KING);
             }
         }
@@ -463,8 +464,6 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
         if (!get_bit(any_pieces, 1) && !get_bit(any_pieces, 2) && !get_bit(any_pieces, 3)) {
             if (!is_attacked(b, 2, BLACK) &&
                 !is_attacked(b, 3, BLACK) && !is_attacked(b, 4, BLACK)) {
-                //b->castle[2] = 0;
-                //b->castle[3] = 0;
                 addElement(mL, 4, 2, 0, 0, 0, 0, 2, KING);
             }
         }
@@ -491,8 +490,8 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     unsigned long enpassant_attacks;
     unsigned long promotion_pushes;
     unsigned long promotion_attacks;
-    //Peones blancos
 
+    //Peones blancos
     unsigned long WP = b->WP;
     while(WP){
         from = get_ls1b_index(WP);
@@ -508,8 +507,8 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
             to = from - 16;
             addElement(mL, from, to, 0, 1UL<<to, 0, 0, 0, PAWN);
         }
-        //Captura peones
 
+        //Captura peones
         pawn_attacks = pawn_attacks_table[WHITE][from] & black_pieces;
         while(pawn_attacks){
             to = get_ls1b_index(pawn_attacks);
@@ -518,7 +517,6 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
         }
 
         //Captura al paso
-
         if(lastMove.enpassantsquare){
             enpassant_attacks = pawn_attacks_table[WHITE][from+8] & lastMove.enpassantsquare;
             if(enpassant_attacks){
@@ -526,6 +524,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
                 addElement(mL, from, to - 8, 1, 0, 1, 0, 0, PAWN);
             }
         }
+
         //Promocion avanzando
         promotion_pushes = pawn_promotion_pushes_table[WHITE][from] & ~any_pieces;
         if(promotion_pushes){
@@ -568,7 +567,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
 
     //Rey blancos
     from = get_ls1b_index(b->WK);
-    //Consultamos los movimientos y descartamos aquellos que no se pueden hacer por haber una pieza blanca
+    //Bitboard con los posibles movimientos del rey
     aux = king_move_table[from]  & ~white_pieces;
     while(aux) {
         to = get_ls1b_index(aux);
@@ -577,9 +576,6 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
         else addElement(mL, from, to, 0, 0, 0, 0, 0, KING);
         pop_bit(aux, to);
     }
-
-    /*Aquí usaríamos magic bitboards para calcular los movimientos pero por ahora voy a dejarlo así*/
-    /*Por ahora se calcula en tiempo de ejecución*/
 
     //Torres blancas
     unsigned long WR = b->WR;
@@ -628,6 +624,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
         }
         pop_bit(WQ, from);
     }
+
     //Enroque blanco corto
     if(b->castle[0]){
         //Si no hay ninguna pieza entre rey y torre y no están siendo atacadas las casillas
@@ -639,6 +636,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     }
     //Enroque largo blanco
     if(b->castle[1]){
+        //Si no hay ninguna pieza entre rey y torre y no están siendo atacadas las casillas
         if(!get_bit(any_pieces, 57) && !get_bit(any_pieces, 58) && !get_bit(any_pieces, 59)) {
             if (!is_attacked(b, 58, WHITE) &&
                 !is_attacked(b, 59, WHITE) && !is_attacked(b, 60, WHITE)) {
@@ -653,17 +651,20 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
 //Realizar movimiento(no comprobamos si es legal o no en este momento)
 void make_move(board *b, move m, unmake_stack *unmakeStack){
     unmake_info unmakeInfo;
+    //Inicializamos valores de unmakeinfo
     unmakeInfo.castle[0] = 0;
     unmakeInfo.castle[1] = 0;
     unmakeInfo.castle[2] = 0;
     unmakeInfo.castle[3] = 0;
     unmakeInfo.capture_piece = 6;
     unmakeInfo.capture_enpassant = 6;
+
     switch (m.piece) {
         case PAWN:
             if(b->side == WHITE){
                 pop_bit(b->WP, m.from);
                 set_bit(b->WP, m.to);
+
                 //Si es una promoción transformar la pieza
                 if(m.promotion){
                     pop_bit(b->WP, m.to);
@@ -682,6 +683,7 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
                             break;
                     }
                 }
+
                 //Si hay captura al paso borramos la pieza capturada
                 if(m.enpassant){
                     if(get_bit(b->BP, m.to + 8)){
@@ -693,6 +695,7 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
             else{
                 pop_bit(b->BP, m.from);
                 set_bit(b->BP, m.to);
+
                 //Si es una promoción transformar la pieza
                 if(m.promotion){
                     pop_bit(b->BP, m.to);
@@ -841,6 +844,7 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
             }
             else if(get_bit(b->BR, m.to)){
                 pop_bit(b->BR, m.to);
+                //Guardamos info acgtual de enroque y quitamos la posibilidad de enroque
                 unmakeInfo.castle[2] = b->castle[2];
                 unmakeInfo.castle[3] = b->castle[3];
                 if(m.to == 0)b->castle[3] = 0;
@@ -866,6 +870,7 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
                 unmakeInfo.capture_piece = BISHOP;
             }
             else if(get_bit(b->WR, m.to)){
+                //Guardamos info acgtual de enroque y quitamos la posibilidad de enroque
                 unmakeInfo.castle[0] = b->castle[0];
                 unmakeInfo.castle[1] = b->castle[1];
                 if(m.to == 56)b->castle[1] = 0;
@@ -902,22 +907,8 @@ if(b->side == BLACK){
     }
     return 0;
 }
-//Deshacer movimiento
-//Funciones para pila de unmake_info
-void push_unmake(unmake_stack *stack, unmake_info unmake){
-    stack->stack[stack->nElements].capture_piece = unmake.capture_piece;
-    stack->stack[stack->nElements].capture_enpassant = unmake.capture_enpassant;
-    stack->stack[stack->nElements].castle[0] = unmake.castle[0];
-    stack->stack[stack->nElements].castle[1] = unmake.castle[1];
-    stack->stack[stack->nElements].castle[2] = unmake.castle[2];
-    stack->stack[stack->nElements].castle[3] = unmake.castle[3];
-    stack->nElements++;
-}
-unmake_info pop_unmake(unmake_stack *stack){
-    stack->nElements--;
-    unmake_info unmake = stack->stack[stack->nElements];
-    return unmake;
-}
+
+
 //Deshacer movimiento
 void unmake_move(board *b, move m, unmake_stack *unmakeStack){
     //Cambiar turno
@@ -1087,6 +1078,7 @@ void unmake_move(board *b, move m, unmake_stack *unmakeStack){
                 set_bit(b->BB, m.to);
             }
             else if(unmakeInfo.capture_piece == ROOK){
+                //Recuperar info de enroque
                 b->castle[2] = unmakeInfo.castle[2];
                 b->castle[3] = unmakeInfo.castle[3];
                 set_bit(b->BR, m.to);
@@ -1106,6 +1098,7 @@ void unmake_move(board *b, move m, unmake_stack *unmakeStack){
                 set_bit(b->WB, m.to);
             }
             else if(unmakeInfo.capture_piece == ROOK){
+                //Recuperar info de enroque
                 set_bit(b->WR, m.to);
                 b->castle[0] = unmakeInfo.castle[0];
                 b->castle[1] = unmakeInfo.castle[1];
@@ -1186,7 +1179,7 @@ void move_to_string(move *m, char *string){
         }
     }
     else{
-        *string = NULL;
+        *string = '\0';
     }
 }
 
