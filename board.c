@@ -203,6 +203,9 @@ void importFEN(char *fen, board *b){
             *fen++;
         }
     }
+    b->black_pieces = b->BP | b->BN | b->BB | b->BR | b->BQ | b->BK;
+    b->white_pieces =  b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
+    b->any_pieces = b->white_pieces | b->white_pieces;
     //Espacio en blanco del lado que juega
     *fen++;
     //Marcar lado que juega
@@ -245,6 +248,7 @@ void importFEN(char *fen, board *b){
         }
         b->enpassant_square  = 1UL << square;
     }
+
 }
 
 void print_bitboard(unsigned long b) {

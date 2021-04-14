@@ -1,9 +1,12 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "moves.h"
 #include "board.h"
 #include "bitops.h"
-#include <stdio.h>
-#include <stdlib.h>
+//#include "zobrist.h"
 #include "magic_bitboards.h"
+
+unmake_stack stack;
 
 //Constantes de bitboards equivalentes a partes del tablero utiles para hacer operaciones
 const unsigned long not_column_a = 18374403900871474942ULL;
@@ -28,23 +31,25 @@ unsigned long pawn_promotion_pushes_table[2][64];
 unsigned long pawn_promotion_attacks_table[2][64];
 
 //Inicializa una lista de movimientos
-moveList *create_move_list(){
+static moveList *create_move_list(){
     moveList *list = malloc(sizeof(moveList));
     list->nElements = 0;
     return list;
 }
 
 //Añade elemento a la lista de elementos
-void addElement(moveList *l,unsigned char from, unsigned char  to, unsigned  capture, unsigned long enpassantsquare,
+static void addElement(moveList *l,unsigned char from, unsigned char  to, unsigned  capture, unsigned long enpassantsquare,
                 unsigned enpassant, unsigned  promotion, unsigned  castling, unsigned piece){
-    l->list[l->nElements].from = from;
-    l->list[l->nElements].to = to;
-    l->list[l->nElements].enpassantsquare = enpassantsquare;
-    l->list[l->nElements].enpassant = enpassant;
-    l->list[l->nElements].promotion = promotion;
-    l->list[l->nElements].castling = castling;
-    l->list[l->nElements].capture = capture;
-    l->list[l->nElements].piece = piece;
+    unsigned short nElements = l->nElements;
+
+    l->list[nElements].from = from;
+    l->list[nElements].to = to;
+    l->list[nElements].enpassantsquare = enpassantsquare;
+    l->list[nElements].enpassant = enpassant;
+    l->list[nElements].promotion = promotion;
+    l->list[nElements].castling = castling;
+    l->list[nElements].capture = capture;
+    l->list[nElements].piece = piece;
     l->nElements++;
 }
 
@@ -63,24 +68,19 @@ void initMove(move *m){
 //Funciones para pila de unmake_info
 
 //Meter en la pila
-void push_unmake(unmake_stack *stack, unmake_info unmake){
-    stack->stack[stack->nElements].capture_piece = unmake.capture_piece;
-    stack->stack[stack->nElements].capture_enpassant = unmake.capture_enpassant;
-    stack->stack[stack->nElements].castle[0] = unmake.castle[0];
-    stack->stack[stack->nElements].castle[1] = unmake.castle[1];
-    stack->stack[stack->nElements].castle[2] = unmake.castle[2];
-    stack->stack[stack->nElements].castle[3] = unmake.castle[3];
-    stack->nElements++;
+static void push_unmake( unmake_info unmake){
+    stack.stack[stack.nElements] = unmake;
+    stack.nElements++;
 }
 
 //Sacar de ella
-unmake_info pop_unmake(unmake_stack *stack){
-    stack->nElements--;
-    unmake_info unmake = stack->stack[stack->nElements];
+static unmake_info pop_unmake(){
+    stack.nElements--;
+    unmake_info unmake = stack.stack[stack.nElements];
     return unmake;
 }
 //Generar movimiento de los peones(Vamos a generarlos al inicio de la ejecución del engine)
-unsigned long generate_pawn_pushes(int square, unsigned side){
+static unsigned long generate_pawn_pushes(int square, unsigned side){
     unsigned long moves = 0UL;
 
     unsigned long board = 0UL;
@@ -101,7 +101,7 @@ unsigned long generate_pawn_pushes(int square, unsigned side){
     return moves;
 }
 
-unsigned long generate_pawn_attacks(int square, unsigned side){
+static unsigned long generate_pawn_attacks(int square, unsigned side){
     unsigned long moves = 0UL;
     unsigned long board = 0UL;
     set_bit(board, square);
@@ -121,7 +121,7 @@ unsigned long generate_pawn_attacks(int square, unsigned side){
     }
     return moves;
 }
-unsigned long generate_pawn_promotion_pushes(int square, unsigned side){
+static unsigned long generate_pawn_promotion_pushes(int square, unsigned side){
     unsigned long moves = 0UL;
 
     unsigned long board = 0UL;
@@ -143,7 +143,7 @@ unsigned long generate_pawn_promotion_pushes(int square, unsigned side){
     return moves;
 }
 
-unsigned long generate_pawn_promotion_attacks(int square, unsigned side){
+static unsigned long generate_pawn_promotion_attacks(int square, unsigned side){
     unsigned long moves = 0UL;
     unsigned long board = 0UL;
     set_bit(board, square);
@@ -164,7 +164,7 @@ unsigned long generate_pawn_promotion_attacks(int square, unsigned side){
     return moves;
 }
 //Genera el movimiento de los caballos
-unsigned long generate_knight_moves(int square){
+static unsigned long generate_knight_moves(int square){
     unsigned long moves = 0UL;
 
     unsigned long board = 0UL;
@@ -183,7 +183,7 @@ unsigned long generate_knight_moves(int square){
 }
 
 //Genera el movimiento de los reyes
-unsigned long generate_king_moves(int square){
+static unsigned long generate_king_moves(int square){
     unsigned long moves = 0UL;
     unsigned long board = 0UL;
     set_bit(board, square);
@@ -225,7 +225,7 @@ void generate_move_tables(){
 
 
 //Calcular ataque del alfil
-unsigned long bishop_moves(int square, unsigned long all_pieces)
+static unsigned long bishop_moves(int square, unsigned long all_pieces)
 {
     unsigned long moves = 0UL;
 
@@ -264,7 +264,7 @@ unsigned long bishop_moves(int square, unsigned long all_pieces)
 }
 
 //Calcular ataque de la torre
-unsigned long rook_moves(int square, unsigned long all_pieces)
+static unsigned long rook_moves(int square, unsigned long all_pieces)
 {
     unsigned long moves = 0UL;
     int f, r;
@@ -303,9 +303,6 @@ unsigned long rook_moves(int square, unsigned long all_pieces)
 
 
 moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
-    //Creamos la lista
-    //moveList *mL = create_move_list();
-
     //Posición inicial y final de la pieza movida
     unsigned char from;
     unsigned char to;
@@ -649,7 +646,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
 }
 
 //Realizar movimiento(no comprobamos si es legal o no en este momento)
-void make_move(board *b, move m, unmake_stack *unmakeStack){
+static void make_move(board *b, move m){
     unmake_info unmakeInfo;
     //Inicializamos valores de unmakeinfo
     unmakeInfo.castle[0] = 0;
@@ -658,12 +655,22 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
     unmakeInfo.castle[3] = 0;
     unmakeInfo.capture_piece = 6;
     unmakeInfo.capture_enpassant = 6;
+    unmakeInfo.enpassant_square = b->enpassant_square;
+    b->enpassant_square = 0;
 
+    //Actualizar hash pieza
+    //b->hash ^= pieces_keys[m.from][m.piece][b->side];
+    //b->hash ^= pieces_keys[m.to][m.piece][b->side];
     switch (m.piece) {
         case PAWN:
             if(b->side == WHITE){
                 pop_bit(b->WP, m.from);
                 set_bit(b->WP, m.to);
+                if(m.enpassantsquare){
+                    b->enpassant_square = m.enpassantsquare;
+                    //Actualizar pieza por casilla captura al paso
+                    //b.hash ^=
+                }
 
                 //Si es una promoción transformar la pieza
                 if(m.promotion){
@@ -885,23 +892,23 @@ void make_move(board *b, move m, unmake_stack *unmakeStack){
         }
     }
     //Añadir a la pila de unmake la info
-    push_unmake(unmakeStack, unmakeInfo);
+    push_unmake(unmakeInfo);
     //Cambiar turno
     if(b->side == WHITE)b->side = BLACK;
     else b->side = WHITE;
 }
 //Hacer movimientos legales solamente
-int make_legal_move(board *b, move m, unmake_stack *unmakeStack){
-    make_move(b, m, unmakeStack);
+int make_legal_move(board *b, move m){
+    make_move(b, m);
 if(b->side == BLACK){
         if(is_attacked(b, get_ls1b_index(b->WK), WHITE)) {
-            unmake_move(b, m, unmakeStack);
+            unmake_move(b, m);
             return 1;
         }
     }
     else{
     if(is_attacked(b, get_ls1b_index(b->BK), BLACK)) {
-            unmake_move(b, m, unmakeStack);
+            unmake_move(b, m);
             return 1;
         }
     }
@@ -910,18 +917,19 @@ if(b->side == BLACK){
 
 
 //Deshacer movimiento
-void unmake_move(board *b, move m, unmake_stack *unmakeStack){
+void unmake_move(board *b, move m){
     //Cambiar turno
     if(b->side == WHITE)b->side = BLACK;
     else b->side = WHITE;
-    struct unmake_info unmakeInfo = pop_unmake(unmakeStack);
+    struct unmake_info unmakeInfo = pop_unmake();
+    b->enpassant_square = unmakeInfo.enpassant_square;
     switch (m.piece) {
         case PAWN:
             if(b->side == WHITE){
 
                 pop_bit(b->WP, m.to);
                 set_bit(b->WP, m.from);
-                //Si es una promoción transformar la pieza de nuevo
+                //Si avanzamos dos casillas
                 if(m.promotion){
                     switch (m.promotion) {
                         case KNIGHT:
@@ -1111,7 +1119,7 @@ void unmake_move(board *b, move m, unmake_stack *unmakeStack){
 }
 
 //Comprobar si una casilla está atacada por alguna pieza
-int is_attacked(board *b, int square, unsigned side){
+static int is_attacked(board *b, int square, unsigned side){
     //Bitboards que representa todas las piezas negras blancas y todas las negras
     black_pieces = b->BP | b->BN | b->BB | b->BR | b->BQ | b->BK;
     white_pieces = b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
@@ -1127,9 +1135,9 @@ int is_attacked(board *b, int square, unsigned side){
 
         //Incluimos la reina en torres y alfiles para simplificarlo
         //Si está siendo atacado por alfiles
-        if(bishop_moves(square, any_pieces) & (b->WB | b->WQ)) return 1;
+        if(get_bishop_attacks(square, any_pieces) & (b->WB | b->WQ)) return 1;
         //Si está siendo atacado por torres
-        if(rook_moves(square, any_pieces)  & (b->WR | b->WQ)) return 1;
+        if(get_rook_attacks(square, any_pieces)  & (b->WR | b->WQ)) return 1;
         //Si está siendo atacada por el rey
         if(king_move_table[square] & b->WK) return 1;
     }
@@ -1143,9 +1151,9 @@ int is_attacked(board *b, int square, unsigned side){
 
         //Incluimos la reina en torres y alfiles para simplificarlo
         //Si está siendo atacado por alfiles
-        if(bishop_moves(square, any_pieces) & (b->BB | b->BQ)) return 1;
+        if(get_bishop_attacks(square, any_pieces) & (b->BB | b->BQ)) return 1;
         //Si está siendo atacado por torres
-        if(rook_moves(square, any_pieces) & (b->BR | b->BQ)) return 1;
+        if(get_rook_attacks(square, any_pieces) & (b->BR | b->BQ)) return 1;
         //Si está siendo atacada por el rey
         if(king_move_table[square] & b->BK) return 1;
     }
@@ -1183,7 +1191,7 @@ void move_to_string(move *m, char *string){
     }
 }
 
-void string_to_move(char *string, move *m){
+static void string_to_move(char *string, move *m){
     //Origen
     m->from = ((string[1] - '1') * 8) + (string[0] - 'a');
     //Destino

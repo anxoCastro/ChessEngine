@@ -35,6 +35,9 @@ typedef struct{
     //Black king
     unsigned long BK;
 
+    unsigned black_pieces;
+    unsigned white_pieces;
+    unsigned any_pieces;
     //Turno
     unsigned side;
 
@@ -47,6 +50,9 @@ typedef struct{
 
     //Casila de captura al paso(quizás haya que cambiar struct move)
     unsigned long enpassant_square;
+
+    //Hash key del tablero
+    unsigned long hash;
 
 }board;
 

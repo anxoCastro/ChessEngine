@@ -70,6 +70,7 @@ typedef struct unmake_info{
     //5 king
     unsigned capture_piece;
     unsigned capture_enpassant;
+    unsigned long enpassant_square;
 }unmake_info;
 
 //Pila con los datos para deshacer los movimientos
@@ -78,16 +79,16 @@ typedef struct unmake_stack{
     int nElements;
     }unmake_stack;
 
-moveList *create_move_list();
+static moveList *create_move_list();
 moveList *generate_black_moves(board *b, move lastMove, moveList *mL);
 moveList *generate_white_moves(board *b, move lastMove, moveList *mL);
 void move_to_string(move *m, char *string);
-int is_attacked(board *b, int square, unsigned side);
-void unmake_move(board *b, move m, struct unmake_stack *unmakeStack);
-void make_move(board *b, move m, unmake_stack *unmakeStack);
-int make_legal_move(board *b, move m, unmake_stack *unmakeStack);
+static int is_attacked(board *b, int square, unsigned side);
+void unmake_move(board *b, move m);
+static void make_move(board *b, move m);
+int make_legal_move(board *b, move m);
 void generate_move_tables();
-void push_unmake(unmake_stack *stack, unmake_info unmake);
-unmake_info pop_unmake(unmake_stack *stack);
+static void push_unmake(unmake_info unmake);
+static unmake_info pop_unmake();
 void initMove(move *m);
 #endif //CHESSENGINEC_MOVES_H

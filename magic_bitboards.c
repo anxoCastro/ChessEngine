@@ -340,20 +340,15 @@ unsigned long get_bishop_attacks(unsigned char square, unsigned long occupancy) 
     occupancy &= bishop_masks[square];
     occupancy *=  bishop_magics[square];
     occupancy >>= 64 - bishop_rellevant_bits[square];
-
-    // return rellevant attacks
     return bishop_attacks[square][occupancy];
 
 }
 
 // lookup rook attacks
 unsigned long get_rook_attacks(unsigned char square, unsigned long occupancy) {
-
     // calculate magic index
     occupancy &= rook_masks[square];
     occupancy *=  rook_magics[square];
     occupancy >>= 64 - rook_rellevant_bits[square];
-
-    // return rellevant attacks
     return rook_attacks[square][occupancy];
 }
