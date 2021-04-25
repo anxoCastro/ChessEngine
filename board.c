@@ -1,20 +1,20 @@
 #include <stdio.h>
 #include "board.h"
 #include "bitops.h"
-
-void initialize_empty_board(board *b){
-    b->WP = 0;
-    b->WR = 0;
-    b->WB = 0;
-    b->WN = 0;
-    b->WK = 0;
-    b->WQ = 0;
-    b->BP = 0;
-    b->BR = 0;
-    b->BB = 0;
-    b->BN = 0;
-    b->BK = 0;
-    b->BQ = 0;
+board b;
+void initialize_empty_board(){
+    b.WP = 0;
+    b.WR = 0;
+    b.WB = 0;
+    b.WN = 0;
+    b.WK = 0;
+    b.WQ = 0;
+    b.BP = 0;
+    b.BR = 0;
+    b.BB = 0;
+    b.BN = 0;
+    b.BK = 0;
+    b.BQ = 0;
 }
 
 //Escribe un 1 posición indicada(la primera es el 0)
@@ -26,7 +26,7 @@ unsigned long char_to_bitboard(int chess_box) {
 }
 
 //Inicia el tablero
-void initBoard(board *b) {
+void initBoard() {
     initialize_empty_board(b);
     char board_values[8][8] = {
             {'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
@@ -44,40 +44,40 @@ void initBoard(board *b) {
             switch (board_values[i][j]) {
                 //Para cada tipo de pieza guardamos en su bitboard correspondiente
                 case 'P':
-                    b->WP += char_to_bitboard((i * 8) + j);
+                    b.WP += char_to_bitboard((i * 8) + j);
                     break;
                 case 'N':
-                    b->WN += char_to_bitboard((i * 8) + j);
+                    b.WN += char_to_bitboard((i * 8) + j);
                     break;
                 case 'B':
-                    b->WB += char_to_bitboard((i * 8) + j);
+                    b.WB += char_to_bitboard((i * 8) + j);
                     break;
                 case 'R':
-                    b->WR += char_to_bitboard((i * 8) + j);
+                    b.WR += char_to_bitboard((i * 8) + j);
                     break;
                 case 'Q':
-                    b->WQ += char_to_bitboard((i * 8) + j);
+                    b.WQ += char_to_bitboard((i * 8) + j);
                     break;
                 case 'K':
-                    b->WK += char_to_bitboard((i * 8) + j);
+                    b.WK += char_to_bitboard((i * 8) + j);
                     break;
                 case 'p':
-                    b->BP += char_to_bitboard((i * 8) + j);
+                    b.BP += char_to_bitboard((i * 8) + j);
                     break;
                 case 'n':
-                    b->BN += char_to_bitboard((i * 8) + j);
+                    b.BN += char_to_bitboard((i * 8) + j);
                     break;
                 case 'b':
-                    b->BB += char_to_bitboard((i * 8) + j);
+                    b.BB += char_to_bitboard((i * 8) + j);
                     break;
                 case 'r':
-                    b->BR += char_to_bitboard((i * 8) + j);
+                    b.BR += char_to_bitboard((i * 8) + j);
                     break;
                 case 'q':
-                    b->BQ += char_to_bitboard((i * 8) + j);
+                    b.BQ += char_to_bitboard((i * 8) + j);
                     break;
                 case 'k':
-                    b->BK += char_to_bitboard((i * 8) + j);
+                    b.BK += char_to_bitboard((i * 8) + j);
                     break;
 
 
@@ -85,17 +85,17 @@ void initBoard(board *b) {
         }
     };
     //Empiezan las blancas
-    b->side = WHITE;
+    b.side = WHITE;
     //Inicializar enroques
-    b->castle[0] = 1;
-    b->castle[1] = 1;
-    b->castle[2] = 1;
-    b->castle[3] = 1;
+    b.castle[0] = 1;
+    b.castle[1] = 1;
+    b.castle[2] = 1;
+    b.castle[3] = 1;
 }
 
 
 //Imprime tablero
-void printBoard(board b) {
+void printBoard() {
     char charBoard[8][8] = {[0 ... 7][0 ... 7] = '-'};
     for (int i = 0; i < 64; i++) {
         if((b.WP>>i) &1) charBoard[i / 8][i % 8] = 'P';
@@ -121,26 +121,26 @@ void printBoard(board b) {
     printf("Black castling: %u %u\n", b.castle[2], b.castle[3]);
 }
 
-void importFEN(char *fen, board *b){
+void importFEN(char *fen){
     //Dejar valores a cero por defecto
-    b->side = WHITE;
-    b->castle[0] = 0;
-    b->castle[1] = 0;
-    b->castle[2] = 0;
-    b->castle[3] = 0;
-    b->WP = 0;
-    b->WB = 0;
-    b->WN = 0;
-    b->WR = 0;
-    b->WQ = 0;
-    b->WK = 0;
-    b->BP = 0;
-    b->BB = 0;
-    b->BN = 0;
-    b->BR = 0;
-    b->BQ = 0;
-    b->BK = 0;
-    b->enpassant_square = 0;
+    b.side = WHITE;
+    b.castle[0] = 0;
+    b.castle[1] = 0;
+    b.castle[2] = 0;
+    b.castle[3] = 0;
+    b.WP = 0;
+    b.WB = 0;
+    b.WN = 0;
+    b.WR = 0;
+    b.WQ = 0;
+    b.WK = 0;
+    b.BP = 0;
+    b.BB = 0;
+    b.BN = 0;
+    b.BR = 0;
+    b.BQ = 0;
+    b.BK = 0;
+    b.enpassant_square = 0;
     //Recorrer tablero
     int offset;
     for (int i = 0; i < 8; i++) {
@@ -148,40 +148,40 @@ void importFEN(char *fen, board *b){
             int square = i * 8 + j;
             switch (*fen) {
                 case 'P':
-                    set_bit(b->WP, square);
+                    set_bit(b.WP, square);
                     break;
                 case 'N':
-                    set_bit(b->WN, square);
+                    set_bit(b.WN, square);
                     break;
                 case 'B':
-                    set_bit(b->WB, square);
+                    set_bit(b.WB, square);
                     break;
                 case 'R':
-                    set_bit(b->WR, square);
+                    set_bit(b.WR, square);
                     break;
                 case 'Q':
-                    set_bit(b->WQ, square);
+                    set_bit(b.WQ, square);
                     break;
                 case 'K':
-                    set_bit(b->WK, square);
+                    set_bit(b.WK, square);
                     break;
                 case 'p':
-                    set_bit(b->BP, square);
+                    set_bit(b.BP, square);
                     break;
                 case 'n':
-                    set_bit(b->BN, square);
+                    set_bit(b.BN, square);
                     break;
                 case 'b':
-                    set_bit(b->BB, square);
+                    set_bit(b.BB, square);
                     break;
                 case 'r':
-                    set_bit(b->BR, square);
+                    set_bit(b.BR, square);
                     break;
                 case 'q':
-                    set_bit(b->BQ, square);
+                    set_bit(b.BQ, square);
                     break;
                 case 'k':
-                    set_bit(b->BK, square);
+                    set_bit(b.BK, square);
                     break;
                 case '1' ... '8':
                     offset = *fen - '0';
@@ -203,14 +203,14 @@ void importFEN(char *fen, board *b){
             *fen++;
         }
     }
-    b->black_pieces = b->BP | b->BN | b->BB | b->BR | b->BQ | b->BK;
-    b->white_pieces =  b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
-    b->any_pieces = b->white_pieces | b->white_pieces;
+    b.black_pieces = b.BP | b.BN | b.BB | b.BR | b.BQ | b.BK;
+    b.white_pieces =  b.WP | b.WN | b.WB | b.WR | b.WQ | b.WK;
+    b.any_pieces = b.white_pieces | b.white_pieces;
     //Espacio en blanco del lado que juega
     *fen++;
     //Marcar lado que juega
-    if(*fen == 'w') b->side = WHITE;
-    else b->side = BLACK;
+    if(*fen == 'w') b.side = WHITE;
+    else b.side = BLACK;
     //Saltar a enroques
     *fen++;
     *fen++;
@@ -218,16 +218,16 @@ void importFEN(char *fen, board *b){
     while(*fen != ' '){
         switch(*fen){
             case 'K':
-                b->castle[0] = 1;
+                b.castle[0] = 1;
                 break;
             case 'Q':
-                b->castle[1] = 1;
+                b.castle[1] = 1;
                 break;
             case 'k':
-                b->castle[2] = 1;
+                b.castle[2] = 1;
                 break;
             case 'q':
-                b->castle[3] = 1;
+                b.castle[3] = 1;
                 break;
             case '-':
                 break;
@@ -241,12 +241,12 @@ void importFEN(char *fen, board *b){
         int i = fen[0] - 'a';
         int j = 8 - (fen[1] - '0');
         int square = j * 8 + i;
-        if(b->side == WHITE){
+        if(b.side == WHITE){
             square+=8;
         }else{
             square-=8;
         }
-        b->enpassant_square  = 1UL << square;
+        b.enpassant_square  = 1UL << square;
     }
 
 }

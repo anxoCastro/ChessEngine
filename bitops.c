@@ -27,16 +27,16 @@ unsigned char count_bits(unsigned long bitboard) {
 }
 //Devuelve la posicion del primer 1 de la tabla(255 si es un bitboard vacio)
 unsigned char get_ls1b_index(unsigned long bitboard)
-{   /*
+{
     if (bitboard)
     {
         //Contar bits corridos antes de encontrar un 1
         return count_bits((bitboard & -bitboard) - 1);
-    }*/
+    }
 
-    unsigned char ls1b = __builtin_ffsll(bitboard);
+    /*unsigned char ls1b = __builtin_ffsll(bitboard);
     if(ls1b)
-        return ls1b - 1;
+        return ls1b - 1;*/
     else return 255;
 }
 

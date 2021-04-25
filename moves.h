@@ -80,13 +80,13 @@ typedef struct unmake_stack{
     }unmake_stack;
 
 static moveList *create_move_list();
-moveList *generate_black_moves(board *b, move lastMove, moveList *mL);
-moveList *generate_white_moves(board *b, move lastMove, moveList *mL);
+moveList *generate_black_moves(move lastMove, moveList *mL);
+moveList *generate_white_moves(move lastMove, moveList *mL);
 void move_to_string(move *m, char *string);
-static int is_attacked(board *b, int square, unsigned side);
-void unmake_move(board *b, move m);
-static void make_move(board *b, move m);
-int make_legal_move(board *b, move m);
+static int is_attacked(int square, unsigned side);
+void unmake_move(move m);
+static void make_move(move m);
+int make_legal_move(move m);
 void generate_move_tables();
 static void push_unmake(unmake_info unmake);
 static unmake_info pop_unmake();

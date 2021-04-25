@@ -56,11 +56,11 @@ typedef struct{
 
 }board;
 
-void initBoard(board *b);
-void printBoard(board b);
+void initBoard();
+void printBoard();
 int floor_log2(unsigned long bitboard);
 unsigned char count_bits(unsigned long bitboard);
 unsigned char get_ls1b_index(unsigned long bitboard);
-void importFEN(char *fen, board *b);
+void importFEN(char *fen);
 void print_bitboard(unsigned long b);
 #endif //CHESSENGINEC_BOARD_H

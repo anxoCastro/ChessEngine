@@ -12,39 +12,37 @@
 
 unsigned long leafs;
 moveList m;
+extern board b;
 long get_time_ms() {
     struct timeval time_value;
     gettimeofday(&time_value, NULL);
     return time_value.tv_sec * 1000 + time_value.tv_usec / 1000;
 }
-void perft(board *b, int depth, move lastMove){
+void perft(int depth, move lastMove){
     if(depth == 0){
         leafs++;
         return;
     }
     moveList m;// = create_move_list();
     m.nElements = 0;
-    if(b->side == WHITE){
-        generate_white_moves(b, lastMove, &m);
+    if(b.side == WHITE){
+        generate_white_moves(lastMove, &m);
     }
     else{
-        generate_black_moves(b, lastMove, &m);
+        generate_black_moves(lastMove, &m);
     }
     for(int i = 0; i < m.nElements; i++){
-        if(make_legal_move(b, m.list[i]) == 1){
+        if(make_legal_move(m.list[i]) == 1){
             continue;
         }
-        lastMove = m.list[i];
-        perft(b, depth - 1, lastMove);
-        unmake_move(b, m.list[i]);
+        perft(depth - 1, m.list[i]);
+        unmake_move(m.list[i]);
     }
-    //free(m);
 }
 
 void do_perft(int depth, char *fen){
     //printf("\n      Perft con profundidad: %i\n\n", depth);
-    board b;
-    importFEN(fen, &b);
+    importFEN(fen);
     move lastMove;
     initMove(&lastMove);
     lastMove.enpassantsquare = b.enpassant_square;
@@ -53,21 +51,21 @@ void do_perft(int depth, char *fen){
     long start = get_time_ms();
     moveList m;
     m.nElements=0;
-    if(b.side == WHITE)generate_white_moves(&b, lastMove, &m);
-    else generate_black_moves(&b, lastMove, &m);
+    if(b.side == WHITE)generate_white_moves(lastMove, &m);
+    else generate_black_moves(lastMove, &m);
     for(int i = 0; i < m.nElements; i++){
-        int j = make_legal_move(&b, m.list[i]);
+        int j = make_legal_move(m.list[i]);
         if(j== 1){
             continue;
         }
         unsigned long cummulative_nodes = leafs;
         lastMove = m.list[i];
         move_to_string(&m.list[i], string);
-        perft(&b, depth - 1, lastMove);
+        perft(depth - 1, lastMove);
         unsigned long old_nodes = leafs - cummulative_nodes;
         //printf("        Movimiento: %s  nodos: %lu\n", string, old_nodes);
         printf("%s %lu\n", string, old_nodes);
-        unmake_move(&b, m.list[i]);
+        unmake_move(m.list[i]);
     }
     long end = get_time_ms();
     //printf("\n  Numero de posiciones finales totales: %lu\n", leafs);
