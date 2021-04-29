@@ -99,3 +99,5 @@ cmake-build-debug/CMakeFiles/progress.marks
 git-quick-stats/
 perf.data
 oldmain.c
+cmake-build-debug/CMakeFiles/ChessEngineC.dir/zobrist.c.o
+cmake-build-debug/CMakeFiles/ChessEngineC.dir/perft.c.o

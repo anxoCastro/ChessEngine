@@ -3,8 +3,9 @@
 #include "moves.h"
 #include "board.h"
 #include "bitops.h"
-//#include "zobrist.h"
+#include "zobrist.h"
 #include "magic_bitboards.h"
+
 
 unmake_stack stack;
 
@@ -345,7 +346,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
             enpassant_attacks = pawn_attacks_table[BLACK][from-8] & lastMove.enpassantsquare;
             if(enpassant_attacks){
                 to = get_ls1b_index(enpassant_attacks);
-                addElement(mL, from, to + 8, 1, 0, 1, 0, 0, PAWN);
+                addElement(mL, from, to + 8, 0, 0, 1, 0, 0, PAWN);
             }
         }
         //Promocion avanzando
@@ -518,7 +519,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
             enpassant_attacks = pawn_attacks_table[WHITE][from+8] & lastMove.enpassantsquare;
             if(enpassant_attacks){
                 to = get_ls1b_index(enpassant_attacks);
-                addElement(mL, from, to - 8, 1, 0, 1, 0, 0, PAWN);
+                addElement(mL, from, to - 8, 0, 0, 1, 0, 0, PAWN);
             }
         }
 
@@ -562,7 +563,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
 
     }
 
-    //Rey blancos
+    //Rey blanco
     from = get_ls1b_index(b->WK);
     //Bitboard con los posibles movimientos del rey
     aux = king_move_table[from]  & ~white_pieces;
@@ -657,10 +658,13 @@ static void make_move(board *b, move m){
     unmakeInfo.capture_enpassant = 6;
     unmakeInfo.enpassant_square = b->enpassant_square;
     b->enpassant_square = 0;
-
+    //Actualizar hash de posibilidad de captura al paso
+    if(m.enpassantsquare){
+        b->hash ^= enpassant_keys[get_ls1b_index(m.enpassantsquare)];
+    }
     //Actualizar hash pieza
-    //b->hash ^= pieces_keys[m.from][m.piece][b->side];
-    //b->hash ^= pieces_keys[m.to][m.piece][b->side];
+    b->hash ^= piece_keys[m.from][m.piece][b->side];
+    b->hash ^= piece_keys[m.to][m.piece][b->side];
     switch (m.piece) {
         case PAWN:
             if(b->side == WHITE){
@@ -668,12 +672,13 @@ static void make_move(board *b, move m){
                 set_bit(b->WP, m.to);
                 if(m.enpassantsquare){
                     b->enpassant_square = m.enpassantsquare;
-                    //Actualizar pieza por casilla captura al paso
-                    //b.hash ^=
                 }
 
                 //Si es una promoción transformar la pieza
                 if(m.promotion){
+                    //Actualizar hash por promoción
+                    b->hash ^= piece_keys[m.to][PAWN][b->side];
+                    b->hash ^= piece_keys[m.to][m.promotion][b->side];
                     pop_bit(b->WP, m.to);
                     switch (m.promotion) {
                         case KNIGHT:
@@ -693,10 +698,10 @@ static void make_move(board *b, move m){
 
                 //Si hay captura al paso borramos la pieza capturada
                 if(m.enpassant){
-                    if(get_bit(b->BP, m.to + 8)){
+                        //Actualiza hash captura al paso
+                        b->hash ^= piece_keys[m.to + 8][PAWN][BLACK];
                         pop_bit(b->BP, m.to + 8);
                         unmakeInfo.capture_enpassant = 1;
-                    }
                 }
             }
             else{
@@ -705,6 +710,9 @@ static void make_move(board *b, move m){
 
                 //Si es una promoción transformar la pieza
                 if(m.promotion){
+                    //Actualizar hash por promoción
+                    b->hash ^= piece_keys[m.to][PAWN][b->side];
+                    b->hash ^= piece_keys[m.to][m.promotion][b->side];
                     pop_bit(b->BP, m.to);
                     switch (m.promotion) {
                         case KNIGHT:
@@ -723,10 +731,10 @@ static void make_move(board *b, move m){
                 }
                 //Si hay captura al paso borramos la pieza capturada
                 if(m.enpassant){
-                    if(get_bit(b->WP, m.to - 8)){
+                        //Actualiza hash captura al paso
+                        b->hash ^= piece_keys[m.to - 8][PAWN][WHITE];
                         pop_bit(b->WP, m.to - 8);
                         unmakeInfo.capture_enpassant = 1;
-                    }
                 }
             }
             break;
@@ -756,8 +764,16 @@ static void make_move(board *b, move m){
                 unmakeInfo.castle[0] = b->castle[0];
                 unmakeInfo.castle[1] = b->castle[1];
                 //Quitamos enroques
-                if(m.from == 56)b->castle[1] = 0;
-                if(m.from == 63)b->castle[0] = 0;
+                if(m.from == 56){
+                    b->castle[1] = 0;
+                    //Actualizar hash enroque
+                    b->hash ^= castle_keys[1];
+                }
+                if(m.from == 63){
+                    b->castle[0] = 0;
+                    //Actualizar hash enroque
+                    b->hash ^= castle_keys[0];
+                }
                 pop_bit(b->WR, m.from);
                 set_bit(b->WR, m.to);
             }
@@ -766,8 +782,16 @@ static void make_move(board *b, move m){
                 unmakeInfo.castle[2] = b->castle[2];
                 unmakeInfo.castle[3] = b->castle[3];
                 //Quitamos enroques
-                if(m.from == 0)b->castle[3] = 0;
-                if(m.from == 7)b->castle[2] = 0;
+                if(m.from == 0){
+                    b->castle[3] = 0;
+                    //Actualizar hash enroque
+                    b->hash ^= castle_keys[3];
+                }
+                if(m.from == 7){
+                    b->castle[2] = 0;
+                    //Actualizar hash enroque
+                    b->hash ^= castle_keys[2];
+                }
                 pop_bit(b->BR, m.from);
                 set_bit(b->BR, m.to);
             }
@@ -793,17 +817,27 @@ static void make_move(board *b, move m){
                 if(m.castling){
                     //Enroque corto
                     if(m.castling == 1){
-                            //Movemos torre
-                            pop_bit(b->WR, 63);
-                            set_bit(b->WR, 61);
+                        //Actualizar hash torre movida
+                        b->hash ^= piece_keys[63][ROOK][b->side];
+                        b->hash ^= piece_keys[61][ROOK][b->side];
+                        //Movemos torre
+                        pop_bit(b->WR, 63);
+                        set_bit(b->WR, 61);
                     }
                     //Enroque largo
                     if(m.castling == 2){
+                        //Actualizar hash torre movida
+                        b->hash ^= piece_keys[56][ROOK][b->side];
+                        b->hash ^= piece_keys[59][ROOK][b->side];
                             //Movemos torre
                             pop_bit(b->WR, 56);
                             set_bit(b->WR, 59);
                     }
                 }
+
+                //Actualizamos hash enroque
+                b->hash ^= castle_keys[0];
+                b->hash ^= castle_keys[1];
                 //Quitamos enroques
                 b->castle[0] = 0;
                 b->castle[1] = 0;
@@ -818,17 +852,26 @@ static void make_move(board *b, move m){
                 if(m.castling){
                     //Enroque corto
                     if(m.castling == 1){
+                        //Actualizar hash torre movida
+                        b->hash ^= piece_keys[7][ROOK][b->side];
+                        b->hash ^= piece_keys[5][ROOK][b->side];
                             //Movemos torre
                             pop_bit(b->BR, 7);
                             set_bit(b->BR, 5);
                     }
                     //Enroque largo
                     if(m.castling == 2){
+                        //Actualizar hash torre movida
+                        b->hash ^= piece_keys[0][ROOK][b->side];
+                        b->hash ^= piece_keys[3][ROOK][b->side];
                             //Movemos torre
                             pop_bit(b->BR, 0);
                             set_bit(b->BR, 3);
                     }
                 }
+                //Actualizamos hash enroque
+                b->hash ^= castle_keys[2];
+                b->hash ^= castle_keys[3];
                 b->castle[2] = 0;
                 b->castle[3] = 0;
             }
@@ -838,27 +881,46 @@ static void make_move(board *b, move m){
     if(m.capture){
         if(b->side == WHITE){
             if(get_bit(b->BP, m.to)){
+
+                //Actualizamos hash pieza capturada
+                b->hash ^= piece_keys[m.to][PAWN][BLACK];
                 pop_bit(b->BP, m.to);
                 unmakeInfo.capture_piece = PAWN;
             }
             else if(get_bit(b->BN, m.to)){
+                //Actualizamos hash pieza capturada
+                b->hash ^= piece_keys[m.to][KNIGHT][BLACK];
                 pop_bit(b->BN, m.to);
                 unmakeInfo.capture_piece = KNIGHT;
             }
             else if(get_bit(b->BB, m.to)){
+                //Actualizamos hash pieza capturada
+                b->hash ^= piece_keys[m.to][BISHOP][BLACK];
                 pop_bit(b->BB, m.to);
                 unmakeInfo.capture_piece = BISHOP;
             }
             else if(get_bit(b->BR, m.to)){
+                //Actualizamos hash pieza capturada
+                b->hash ^= piece_keys[m.to][ROOK][BLACK];
                 pop_bit(b->BR, m.to);
                 //Guardamos info acgtual de enroque y quitamos la posibilidad de enroque
                 unmakeInfo.castle[2] = b->castle[2];
                 unmakeInfo.castle[3] = b->castle[3];
-                if(m.to == 0)b->castle[3] = 0;
-                if(m.to == 7)b->castle[2] = 0;
+                if(m.to == 0){
+                    //Actualizamos hash pieza capturada enroque
+                    b->hash ^= castle_keys[3];
+                    b->castle[3] = 0;
+                }
+                if(m.to == 7){
+                    //Actualizamos hash pieza capturada enroque
+                    b->hash ^= castle_keys[2];
+                    b->castle[2] = 0;
+                }
                 unmakeInfo.capture_piece = ROOK;
             }
             else if(get_bit(b->BQ, m.to)){
+                //Actualizamos hash pieza capturada
+                b->hash ^= piece_keys[m.to][QUEEN][BLACK];
                 pop_bit(b->BQ, m.to);
                 unmakeInfo.capture_piece = QUEEN;
             }
@@ -866,26 +928,44 @@ static void make_move(board *b, move m){
         else{
             if(get_bit(b->WP, m.to)){
                 pop_bit(b->WP, m.to);
+                //Actualizamos hash pieza capturada
+                b->hash ^= piece_keys[m.to][PAWN][WHITE];
                 unmakeInfo.capture_piece = PAWN;
             }
             else if(get_bit(b->WN, m.to)){
+                //Actualizamos hash pieza capturada
+                b->hash ^= piece_keys[m.to][KNIGHT][WHITE];
                 pop_bit(b->WN, m.to);
                 unmakeInfo.capture_piece = KNIGHT;
             }
             else if(get_bit(b->WB, m.to)){
+                //Actualizamos hash pieza capturada
+                b->hash ^= piece_keys[m.to][BISHOP][WHITE];
                 pop_bit(b->WB, m.to);
                 unmakeInfo.capture_piece = BISHOP;
             }
             else if(get_bit(b->WR, m.to)){
+                //Actualizamos hash pieza capturada
+                b->hash ^= piece_keys[m.to][ROOK][WHITE];
                 //Guardamos info acgtual de enroque y quitamos la posibilidad de enroque
                 unmakeInfo.castle[0] = b->castle[0];
                 unmakeInfo.castle[1] = b->castle[1];
-                if(m.to == 56)b->castle[1] = 0;
-                if(m.to == 63)b->castle[0] = 0;
+                if(m.to == 56){
+                    //Actualizamos hash pieza capturada enroque
+                    b->hash ^= castle_keys[1];
+                    b->castle[1] = 0;
+                }
+                if(m.to == 63){
+                    //Actualizamos hash pieza capturada enroque
+                    b->hash ^= castle_keys[0];
+                    b->castle[0] = 0;
+                }
                 pop_bit(b->WR, m.to);
                 unmakeInfo.capture_piece = ROOK;
             }
             else if(get_bit(b->WQ, m.to)){
+                //Actualizamos hash pieza capturada
+                b->hash ^= piece_keys[m.to][QUEEN][WHITE];
                 pop_bit(b->WQ, m.to);
                 unmakeInfo.capture_piece = QUEEN;
             }
@@ -896,6 +976,8 @@ static void make_move(board *b, move m){
     //Cambiar turno
     if(b->side == WHITE)b->side = BLACK;
     else b->side = WHITE;
+    //Actualizar hash turno
+    b->hash ^= side_key;
 }
 //Hacer movimientos legales solamente
 int make_legal_move(board *b, move m){
@@ -919,10 +1001,19 @@ if(b->side == BLACK){
 //Deshacer movimiento
 void unmake_move(board *b, move m){
     //Cambiar turno
+    b->hash ^= side_key;
     if(b->side == WHITE)b->side = BLACK;
     else b->side = WHITE;
+    //Actualizar hash de posibilidad de captura al paso
+    if(m.enpassantsquare){
+        b->hash ^= enpassant_keys[get_ls1b_index(m.enpassantsquare)];
+    }
+    //Actualizar hash turno
     struct unmake_info unmakeInfo = pop_unmake();
     b->enpassant_square = unmakeInfo.enpassant_square;
+    //Actualizamos hash movida
+    b->hash ^= piece_keys[m.to][m.piece][b->side];
+    b->hash ^= piece_keys[m.from][m.piece][b->side];
     switch (m.piece) {
         case PAWN:
             if(b->side == WHITE){
@@ -931,6 +1022,9 @@ void unmake_move(board *b, move m){
                 set_bit(b->WP, m.from);
                 //Si avanzamos dos casillas
                 if(m.promotion){
+                    //Actualizar hash por promoción
+                    b->hash ^= piece_keys[m.to][PAWN][b->side];
+                    b->hash ^= piece_keys[m.to][m.promotion][b->side];
                     switch (m.promotion) {
                         case KNIGHT:
                             pop_bit(b->WN, m.to);
@@ -948,7 +1042,9 @@ void unmake_move(board *b, move m){
                 }
                 //Si hay captura al paso recuperamos la pieza capturada
                 if(m.enpassant){
-                    set_bit(b->BP, m.to + 8);
+                        //Actualiza hash captura al paso
+                        b->hash ^= piece_keys[m.to + 8][PAWN][BLACK];
+                        set_bit(b->BP, m.to + 8);
                 }
             }
             else{
@@ -956,6 +1052,9 @@ void unmake_move(board *b, move m){
                 pop_bit(b->BP, m.to);
                 //Si es una promoción transformar la pieza de nuevo
                 if(m.promotion){
+                    //Actualizar hash por promoción
+                    b->hash ^= piece_keys[m.to][PAWN][b->side];
+                    b->hash ^= piece_keys[m.to][m.promotion][b->side];
                     switch (m.promotion) {
                         case KNIGHT:
                             pop_bit(b->BN, m.to);
@@ -973,6 +1072,8 @@ void unmake_move(board *b, move m){
                 }
                 //Si hay captura al paso recuperamos la pieza capturada
                 if(m.enpassant){
+                    //Actualiza hash captura al paso
+                    b->hash ^= piece_keys[m.to - 8][PAWN][WHITE];
                         set_bit(b->WP, m.to - 8);
                 }
             }
@@ -1002,6 +1103,14 @@ void unmake_move(board *b, move m){
                 //Recuperamos info de enroque actual de unmake
                 b->castle[0] = unmakeInfo.castle[0];
                 b->castle[1] = unmakeInfo.castle[1];
+                if(m.from == 56){
+                    //Actualizar hash enroque
+                    b->hash ^= castle_keys[1];
+                }
+                if(m.from == 63){
+                    //Actualizar hash enroque
+                    b->hash ^= castle_keys[0];
+                }
                 set_bit(b->WR, m.from);
                 pop_bit(b->WR, m.to);
             }
@@ -1009,6 +1118,14 @@ void unmake_move(board *b, move m){
                 //Recuperamos info de enroque actual de unmake
                 b->castle[2] = unmakeInfo.castle[2];
                 b->castle[3] = unmakeInfo.castle[3];
+                if(m.from == 0){
+                    //Actualizar hash enroque
+                    b->hash ^= castle_keys[3];
+                }
+                if(m.from == 7){
+                    //Actualizar hash enroque
+                    b->hash ^= castle_keys[2];
+                }
                 set_bit(b->BR, m.from);
                 pop_bit(b->BR, m.to);
             }
@@ -1025,6 +1142,7 @@ void unmake_move(board *b, move m){
             break;
         case KING:
             if(b->side == WHITE){
+
                 //Recuperamos info de enroque actual
                 b->castle[0] = unmakeInfo.castle[0];
                 b->castle[1] = unmakeInfo.castle[1];
@@ -1034,17 +1152,28 @@ void unmake_move(board *b, move m){
                 if(m.castling){
                     //Enroque corto
                     if(m.castling == 1){
+                        //Actualizar hash torre movida
+                        b->hash ^= piece_keys[63][ROOK][b->side];
+                        b->hash ^= piece_keys[61][ROOK][b->side];
                             //Movemos torre
                             set_bit(b->WR, 63);
                             pop_bit(b->WR, 61);
                     }
                     //Enroque largo
                     if(m.castling == 2){
+
+                        //Actualizar hash torre movida
+                        b->hash ^= piece_keys[56][ROOK][b->side];
+                        b->hash ^= piece_keys[59][ROOK][b->side];
                             //Movemos torre
                             set_bit(b->WR, 56);
                             pop_bit(b->WR, 59);
                     }
                 }
+                //Actualizamos hash enroque
+                b->hash ^= castle_keys[0];
+                b->hash ^= castle_keys[1];
+
             }
             else{
                 //Recuperamos info de enroque actual
@@ -1056,7 +1185,9 @@ void unmake_move(board *b, move m){
                 if(m.castling){
                     //Enroque corto
                     if(m.castling == 1){
-                        if(unmakeInfo.castle[2]) {
+                        //Actualizar hash torre movida
+                        b->hash ^= piece_keys[7][ROOK][b->side];
+                        b->hash ^= piece_keys[5][ROOK][b->side];
                             //Movemos torre
                             set_bit(b->BR, 7);
                             pop_bit(b->BR, 5);
@@ -1064,18 +1195,27 @@ void unmake_move(board *b, move m){
                     }
                     //Enroque largo
                     if(m.castling == 2){
-                        if(unmakeInfo.castle[3])
+                        //Actualizar hash torre movida
+                        b->hash ^= piece_keys[0][ROOK][b->side];
+                        b->hash ^= piece_keys[3][ROOK][b->side];
                             //Movemos torre
                             set_bit(b->BR, 0);
                             pop_bit(b->BR, 3);
-                    }
+
                 }
+                //Actualizamos hash enroque
+                b->hash ^= castle_keys[2];
+                b->hash ^= castle_keys[3];
             }
+
             break;
     }
     //Si hay captura recuperamos la pieza capturada
     if(m.capture){
+
         if(b->side == WHITE){
+            //Actualizamos hash pieza capturada
+            b->hash ^= piece_keys[m.to][unmakeInfo.capture_piece][BLACK];
             if(unmakeInfo.capture_piece == PAWN){
                 set_bit(b->BP, m.to);
             }
@@ -1086,6 +1226,14 @@ void unmake_move(board *b, move m){
                 set_bit(b->BB, m.to);
             }
             else if(unmakeInfo.capture_piece == ROOK){
+                if(m.to == 0){
+                    //Actualizamos hash pieza capturada enroque
+                    b->hash ^= castle_keys[3];
+                }
+                if(m.to == 7){
+                    //Actualizamos hash pieza capturada enroque
+                    b->hash ^= castle_keys[2];
+                }
                 //Recuperar info de enroque
                 b->castle[2] = unmakeInfo.castle[2];
                 b->castle[3] = unmakeInfo.castle[3];
@@ -1096,6 +1244,8 @@ void unmake_move(board *b, move m){
             }
         }
         else{
+            //Actualizamos hash pieza capturada
+            b->hash ^= piece_keys[m.to][unmakeInfo.capture_piece][WHITE];
             if(unmakeInfo.capture_piece == PAWN){
                 set_bit(b->WP, m.to);
             }
@@ -1106,6 +1256,14 @@ void unmake_move(board *b, move m){
                 set_bit(b->WB, m.to);
             }
             else if(unmakeInfo.capture_piece == ROOK){
+                if(m.to == 56){
+                    //Actualizamos hash pieza capturada enroque
+                    b->hash ^= castle_keys[1];
+                }
+                if(m.to == 63){
+                    //Actualizamos hash pieza capturada enroque
+                    b->hash ^= castle_keys[0];
+                }
                 //Recuperar info de enroque
                 set_bit(b->WR, m.to);
                 b->castle[0] = unmakeInfo.castle[0];

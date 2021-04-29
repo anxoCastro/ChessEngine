@@ -91,6 +91,7 @@ void initBoard(board *b) {
     b->castle[1] = 1;
     b->castle[2] = 1;
     b->castle[3] = 1;
+
 }
 
 
@@ -119,6 +120,7 @@ void printBoard(board b) {
     printf("\n           A B C D E F G H\n\n");
     printf("White castling: %u %u\n", b.castle[0], b.castle[1]);
     printf("Black castling: %u %u\n", b.castle[2], b.castle[3]);
+    printf("Hash: %lu\n", b.hash);
 }
 
 void importFEN(char *fen, board *b){

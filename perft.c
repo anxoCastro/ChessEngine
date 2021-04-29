@@ -7,6 +7,7 @@
 #include "perft.h"
 #include "moves.h"
 #include "board.h"
+#include "zobrist.h"
 #include <string.h>
 #include <sys/time.h>
 
@@ -49,6 +50,11 @@ void do_perft(int depth, char *fen){
     initMove(&lastMove);
     lastMove.enpassantsquare = b.enpassant_square;
     generate_move_tables();
+    init_keys();
+    //Inicializar hash
+    b.hash = generate_hash(b);
+    unsigned long old_hash = b.hash;
+    //printBoard(b);
     char *string = malloc(sizeof(char) * 5);
     long start = get_time_ms();
     moveList m;
@@ -75,5 +81,8 @@ void do_perft(int depth, char *fen){
     //free(m);
     free(string);
     printBoard(b);
+    if(old_hash == b.hash){
+        printf("Los hash coinciden :)\n");
+    }
     printf("Tiempo: %f segundos %f MN/s \n", ( end - start)/ (float)1000,( leafs / (float) 1000) / ((float)(end - start)));
 }
