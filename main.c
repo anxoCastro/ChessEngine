@@ -6,7 +6,7 @@
 #define DEFAULT_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 //#define DEFAULT_FEN "rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq a3"
 
-#define DEPTH 7
+#define DEPTH 6
 int main(int argc, char *argv[]) {
     if(argc > 3){
         if(strcmp(argv[0], "fen")){
