@@ -15,6 +15,13 @@ void initialize_empty_board(board *b){
     b->BN = 0;
     b->BK = 0;
     b->BQ = 0;
+    b->side = WHITE;
+    b->castle[0] = 0;
+    b->castle[1] = 0;
+    b->castle[2] = 0;
+    b->castle[3] = 0;
+    b->enpassant_square = 0;
+    b->hash = 0;
 }
 
 //Escribe un 1 posición indicada(la primera es el 0)
@@ -123,6 +130,29 @@ void printBoard(board b) {
     printf("Hash: %lu\n", b.hash);
 }
 
+int piece_square(unsigned char square, board *b){
+    if(get_bit(b->WP, square) || get_bit(b->BP, square)){
+        return PAWN;
+    }
+    if(get_bit(b->WN, square) || get_bit(b->BN, square)){
+        return KNIGHT;
+    }
+    if(get_bit(b->WB, square)|| get_bit(b->BB, square)){
+        return BISHOP;
+    }
+    if(get_bit(b->WR, square) || get_bit(b->BR, square) ){
+        return ROOK;
+    }
+    if(get_bit(b->WQ, square) || get_bit(b->BQ, square) ){
+        return QUEEN;
+    }
+    if(get_bit(b->WK, square) || get_bit(b->BK, square)){
+        return KING;
+    }
+    //No piece
+    return -1;
+}
+
 void importFEN(char *fen, board *b){
     //Dejar valores a cero por defecto
     b->side = WHITE;
@@ -143,6 +173,7 @@ void importFEN(char *fen, board *b){
     b->BQ = 0;
     b->BK = 0;
     b->enpassant_square = 0;
+    b->hash = 0;
     //Recorrer tablero
     int offset;
     for (int i = 0; i < 8; i++) {

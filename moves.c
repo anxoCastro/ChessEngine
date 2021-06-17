@@ -647,7 +647,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
 }
 
 //Realizar movimiento(no comprobamos si es legal o no en este momento)
-static void make_move(board *b, move m){
+void make_move(board *b, move m){
     unmake_info unmakeInfo;
     //Inicializamos valores de unmakeinfo
     unmakeInfo.castle[0] = 0;
@@ -982,7 +982,7 @@ static void make_move(board *b, move m){
 //Hacer movimientos legales solamente
 int make_legal_move(board *b, move m){
     make_move(b, m);
-if(b->side == BLACK){
+    if(b->side == BLACK){
         if(is_attacked(b, get_ls1b_index(b->WK), WHITE)) {
             unmake_move(b, m);
             return 1;
@@ -1277,7 +1277,7 @@ void unmake_move(board *b, move m){
 }
 
 //Comprobar si una casilla está atacada por alguna pieza
-static int is_attacked(board *b, int square, unsigned side){
+int is_attacked(board *b, int square, unsigned side){
     //Bitboards que representa todas las piezas negras blancas y todas las negras
     black_pieces = b->BP | b->BN | b->BB | b->BR | b->BQ | b->BK;
     white_pieces = b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
@@ -1324,12 +1324,14 @@ static int is_attacked(board *b, int square, unsigned side){
 //Convertir movimiento(notación en forma de origen + destino)
 //Falta promocion
 void move_to_string(move *m, char *string){
+
     //Origen
     *string++ = 'a' + (m->from % 8);
     *string++  = '1' + 7 - (m->from / 8);
     //Destino
     *string++ = 'a' + (m->to % 8);
     *string++ = '1' + 7 - (m->to / 8);
+
     if(m->promotion){
         if(m->promotion == 1){
             *string = 'n';
@@ -1347,11 +1349,42 @@ void move_to_string(move *m, char *string){
     else{
         *string = '\0';
     }
+
 }
 
-static void string_to_move(char *string, move *m){
+void string_to_move(char *string, move *m, board *b){
+
+    char *work = string;
+
     //Origen
-    m->from = ((string[1] - '1') * 8) + (string[0] - 'a');
+    m->from = (*work++ - 'a') +  (('1' + 7 -*work++)* 8);
     //Destino
-    m->to = ((string[3] - '1') * 8) + (string[2] - 'a');
+    m->to = (*work++ - 'a') + (('1' + 7 - *work++) * 8);
+
+    //Enroque largo
+    if((get_bit(b->WK, m->from) || get_bit(b->BK, m->from)) && (m->from - m->to)== 2){
+        m->castling = 2;
+    }
+    //Enroque corto
+    if((get_bit(b->WK, m->from) || get_bit(b->BK, m->from)) && (m->to - m->from)== 2){
+        m->castling = 1;
+    }
+    m->piece = piece_square(m->from, b);
+    m->capture = (piece_square(m->to, b) != -1) ? 1 : 0;
+    m->enpassant = (b->enpassant_square == m->to) ? 1 : 0;
+    switch (string[4]) {
+        case 'q':
+            m->promotion = QUEEN;
+            break;
+        case 'r':
+            m->promotion = ROOK;
+            break;
+        case 'b':
+            m->promotion = BISHOP;
+            break;
+        case 'n':
+            m->promotion = KNIGHT;
+            break;
+    }
+
 }

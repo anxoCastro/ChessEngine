@@ -63,4 +63,5 @@ unsigned char count_bits(unsigned long bitboard);
 unsigned char get_ls1b_index(unsigned long bitboard);
 void importFEN(char *fen, board *b);
 void print_bitboard(unsigned long b);
+int piece_square(unsigned char square, board *b);
 #endif //CHESSENGINEC_BOARD_H
