@@ -3,7 +3,7 @@
 //
 
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include "perft.h"
 #include "moves.h"
 #include "board.h"
