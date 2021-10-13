@@ -72,12 +72,12 @@ void do_perft(int depth, char *fen){
         perft(&b, depth - 1, lastMove);
         unsigned long long old_nodes = leafs - cummulative_nodes;
         //printf("        Movimiento: %s  nodos: %lu\n", string, old_nodes);
-        printf("%s %lu\n", string, old_nodes);
+        printf("%s %llu\n", string, old_nodes);
         unmake_move(&b, m.list[i]);
     }
     long end = get_time_ms();
     //printf("\n  Numero de posiciones finales totales: %lu\n", leafs);
-    printf("\n%lu\n", leafs);
+    printf("\n%llu\n", leafs);
     //free(m);
     free(string);
     printBoard(b);

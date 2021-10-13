@@ -16,41 +16,31 @@ E:/Anxo/Documents/GitHub/ChessEngine/magic_bitboards.h
 bitops.h
 E:/Anxo/Documents/GitHub/ChessEngine/bitops.h
 
-E:/Anxo/Documents/GitHub/ChessEngine/main.c
-moves.h
-E:/Anxo/Documents/GitHub/ChessEngine/moves.h
-perft.h
-E:/Anxo/Documents/GitHub/ChessEngine/perft.h
-uci.h
-E:/Anxo/Documents/GitHub/ChessEngine/uci.h
-zobrist.h
-E:/Anxo/Documents/GitHub/ChessEngine/zobrist.h
-stdio.h
--
-string.h
--
-stdlib.h
--
-search.h
-E:/Anxo/Documents/GitHub/ChessEngine/search.h
-
 E:/Anxo/Documents/GitHub/ChessEngine/moves.h
 board.h
 E:/Anxo/Documents/GitHub/ChessEngine/board.h
 magic_bitboards.h
 E:/Anxo/Documents/GitHub/ChessEngine/magic_bitboards.h
 
+E:/Anxo/Documents/GitHub/ChessEngine/perft.c
+stdio.h
+-
+stdlib.h
+-
+perft.h
 E:/Anxo/Documents/GitHub/ChessEngine/perft.h
-
-E:/Anxo/Documents/GitHub/ChessEngine/search.h
 moves.h
 E:/Anxo/Documents/GitHub/ChessEngine/moves.h
 board.h
 E:/Anxo/Documents/GitHub/ChessEngine/board.h
+zobrist.h
+E:/Anxo/Documents/GitHub/ChessEngine/zobrist.h
+string.h
+-
+sys/time.h
+-
 
-E:/Anxo/Documents/GitHub/ChessEngine/uci.h
-board.h
-E:/Anxo/Documents/GitHub/ChessEngine/board.h
+E:/Anxo/Documents/GitHub/ChessEngine/perft.h
 
 E:/Anxo/Documents/GitHub/ChessEngine/zobrist.h
 board.h
