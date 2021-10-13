@@ -11,7 +11,7 @@
 #include <string.h>
 #include <sys/time.h>
 
-unsigned long leafs;
+unsigned long long leafs;
 moveList m;
 long get_time_ms() {
     struct timeval time_value;
@@ -53,7 +53,7 @@ void do_perft(int depth, char *fen){
     init_keys();
     //Inicializar hash
     b.hash = generate_hash(b);
-    unsigned long old_hash = b.hash;
+    bitboard old_hash = b.hash;
     //printBoard(b);
     char *string = malloc(sizeof(char) * 5);
     long start = get_time_ms();
@@ -66,11 +66,11 @@ void do_perft(int depth, char *fen){
         if(j== 1){
             continue;
         }
-        unsigned long cummulative_nodes = leafs;
+        unsigned long long cummulative_nodes = leafs;
         lastMove = m.list[i];
         move_to_string(&m.list[i], string);
         perft(&b, depth - 1, lastMove);
-        unsigned long old_nodes = leafs - cummulative_nodes;
+        unsigned long long old_nodes = leafs - cummulative_nodes;
         //printf("        Movimiento: %s  nodos: %lu\n", string, old_nodes);
         printf("%s %lu\n", string, old_nodes);
         unmake_move(&b, m.list[i]);

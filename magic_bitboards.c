@@ -6,15 +6,15 @@
 #include "bitops.h"
 
 // masks
-unsigned long bishop_masks[64];
-unsigned long rook_masks[64];
+bitboard bishop_masks[64];
+bitboard rook_masks[64];
 
 // attacks
-unsigned long bishop_attacks[64][512];
-unsigned long rook_attacks[64][4096];
+bitboard bishop_attacks[64][512];
+bitboard rook_attacks[64][4096];
 
 //Magic numbers para torres y alfiles
-const unsigned long rook_magics[64] = {
+const bitboard rook_magics[64] = {
         0x8a80104000800020ULL,
         0x140002000100040ULL,
         0x2801880a0017001ULL,
@@ -81,7 +81,7 @@ const unsigned long rook_magics[64] = {
         0x1004081002402ULL,
 };
 
-const unsigned long bishop_magics[64] = {
+const bitboard bishop_magics[64] = {
         0x40040844404084ULL,
         0x2004208a004208ULL,
         0x10190041080202ULL,
@@ -173,8 +173,8 @@ int bishop_rellevant_bits[64] = {
 
 
 //Generar mascara movimientos torre
-unsigned long generate_rook_mask(int square){
-    unsigned long moves = 0UL;
+bitboard generate_rook_mask(int square){
+    bitboard moves = 0UL;
     int i;
 
     //Calcular fila y columna
@@ -192,8 +192,8 @@ unsigned long generate_rook_mask(int square){
 };
 
 //Generar mascara movimientos alfil
-unsigned long generate_bishop_mask(int square){
-    unsigned long moves = 0ULL;
+bitboard generate_bishop_mask(int square){
+    bitboard moves = 0ULL;
     int rk = square/8;
     int fl = square%8;
     int r, f;
@@ -207,10 +207,10 @@ unsigned long generate_bishop_mask(int square){
 }
 
 // bishop attacks
-unsigned long bishop_attacks_on_the_fly(int square, unsigned long block)
+bitboard bishop_attacks_on_the_fly(int square, bitboard block)
 {
     // attack bitboard
-    unsigned long attacks = 0ULL;
+    bitboard attacks = 0ULL;
 
     // init files & ranks
     int f, r;
@@ -249,10 +249,10 @@ unsigned long bishop_attacks_on_the_fly(int square, unsigned long block)
 }
 
 // rook attacks
-unsigned long rook_attacks_on_the_fly(int square, unsigned long block)
+bitboard rook_attacks_on_the_fly(int square, bitboard block)
 {
     // attacks bitboard
-    unsigned long attacks = 0ULL;
+    bitboard attacks = 0ULL;
 
     // init files & ranks
     int f, r;
@@ -301,7 +301,7 @@ void init_sliders_attacks(int is_bishop)
         rook_masks[square] = generate_rook_mask(square);
 
         // init current mask
-        unsigned long mask = is_bishop ? generate_bishop_mask(square) : generate_rook_mask(square);
+        bitboard mask = is_bishop ? generate_bishop_mask(square) : generate_rook_mask(square);
 
         // count attack mask bits
         int bit_count = count_bits(mask);
@@ -316,8 +316,8 @@ void init_sliders_attacks(int is_bishop)
             if (is_bishop == 1)
             {
                 // init occupancies, magic index & attacks
-                unsigned long occupancy = set_occupancy(count, bit_count, mask);
-                unsigned long magic_index = occupancy * bishop_magics[square] >> 64 - bishop_rellevant_bits[square];
+                bitboard occupancy = set_occupancy(count, bit_count, mask);
+                bitboard magic_index = occupancy * bishop_magics[square] >> 64 - bishop_rellevant_bits[square];
                 bishop_attacks[square][magic_index] = bishop_attacks_on_the_fly(square, occupancy);
             }
 
@@ -325,8 +325,8 @@ void init_sliders_attacks(int is_bishop)
             else
             {
                 // init occupancies, magic index & attacks
-                unsigned long occupancy = set_occupancy(count, bit_count, mask);
-                unsigned long magic_index = occupancy * rook_magics[square] >> 64 - rook_rellevant_bits[square];
+                bitboard occupancy = set_occupancy(count, bit_count, mask);
+                bitboard magic_index = occupancy * rook_magics[square] >> 64 - rook_rellevant_bits[square];
                 rook_attacks[square][magic_index] = rook_attacks_on_the_fly(square, occupancy);
             }
         }
@@ -334,7 +334,7 @@ void init_sliders_attacks(int is_bishop)
 }
 
 // lookup bishop attacks
-unsigned long get_bishop_attacks(unsigned char square, unsigned long occupancy) {
+bitboard get_bishop_attacks(unsigned char square, bitboard occupancy) {
 
     // calculate magic index
     occupancy &= bishop_masks[square];
@@ -345,7 +345,7 @@ unsigned long get_bishop_attacks(unsigned char square, unsigned long occupancy) 
 }
 
 // lookup rook attacks
-unsigned long get_rook_attacks(unsigned char square, unsigned long occupancy) {
+bitboard get_rook_attacks(unsigned char square, bitboard occupancy) {
     // calculate magic index
     occupancy &= rook_masks[square];
     occupancy *=  rook_magics[square];

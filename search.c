@@ -9,7 +9,7 @@
 #include "board.h"
 #include "eval.h"
 #include "moves.h"
-unsigned long nodes;
+unsigned long long nodes;
 move best_move;
 
 int negamax(board *b, int alpha, int beta, int depth, move lastMove){

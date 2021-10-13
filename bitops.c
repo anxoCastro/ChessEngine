@@ -1,24 +1,24 @@
 #include "bitops.h"
 
-int floor_log2(unsigned long bitboard)
+int floor_log2(bitboard b)
 {
     int pos = 0;
-    if (bitboard >= (unsigned long)1<<32) { bitboard >>= 32; pos += 32; }
-    if (bitboard >= (unsigned long)1<<16) { bitboard >>= 16; pos += 16; }
-    if (bitboard >= (unsigned long)1<< 8) { bitboard >>=  8; pos +=  8; }
-    if (bitboard >= (unsigned long)1<< 4) { bitboard >>=  4; pos +=  4; }
-    if (bitboard >= (unsigned long)1<< 2) { bitboard >>=  2; pos +=  2; }
-    if (bitboard >= (unsigned long)1<< 1) {               pos +=  1; }
+    if (b >= (bitboard)1<<32) { b >>= 32; pos += 32; }
+    if (b >= (bitboard)1<<16) { b >>= 16; pos += 16; }
+    if (b >= (bitboard)1<< 8) { b >>=  8; pos +=  8; }
+    if (b >= (bitboard)1<< 4) { b >>=  4; pos +=  4; }
+    if (b >= (bitboard)1<< 2) { b >>=  2; pos +=  2; }
+    if (b >= (bitboard)1<< 1) {               pos +=  1; }
 
-    return ((bitboard == 0) ? (-1) : pos);
+    return ((b == 0) ? (-1) : pos);
 }
 //Cuenta el numero de bits en un bitboard
-unsigned char count_bits(unsigned long bitboard) {
+unsigned char count_bits(bitboard b) {
 
     unsigned int count = 0;
-    while (bitboard) {
+    while (b) {
         //Restar el bit menos significativo
-        bitboard &= bitboard - 1;
+        b &= b - 1;
         count++;
     }
 
@@ -26,25 +26,25 @@ unsigned char count_bits(unsigned long bitboard) {
     return count;
 }
 //Devuelve la posicion del primer 1 de la tabla(255 si es un bitboard vacio)
-unsigned char get_ls1b_index(unsigned long bitboard)
-{   /*
-    if (bitboard)
+unsigned char get_ls1b_index(bitboard b)
+{
+    if (b)
     {
         //Contar bits corridos antes de encontrar un 1
-        return count_bits((bitboard & -bitboard) - 1);
-    }*/
+        return count_bits((b & -b) - 1);
+    }
 
-    unsigned char ls1b = __builtin_ffsll(bitboard);
+    /*unsigned char ls1b = __builtin_ffsll(b);
     if(ls1b)
         return ls1b - 1;
-    else return 255;
+    else return 255;*/
 }
 
 // set occupancies
-unsigned long set_occupancy(int index, int bits_in_mask, unsigned long attack_mask)
+bitboard set_occupancy(int index, int bits_in_mask, bitboard attack_mask)
 {
     // occupancy map
-    unsigned long occupancy = 0ULL;
+    bitboard occupancy = 0ULL;
 
     // loop over the range of bits within attack mask
     for (int count = 0; count < bits_in_mask; count++)

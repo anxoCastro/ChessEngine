@@ -9,7 +9,7 @@
 
 int evaluation(board b){
     int score = 0;
-    unsigned long aux;
+    bitboard aux;
     unsigned char from;
     //Peones
     aux = b.WP;

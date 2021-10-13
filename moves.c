@@ -10,26 +10,26 @@
 unmake_stack stack;
 
 //Constantes de bitboards equivalentes a partes del tablero utiles para hacer operaciones
-const unsigned long not_column_a = 18374403900871474942ULL;
-const unsigned long not_column_h = 9187201950435737471ULL;
-const unsigned long not_column_hg = 4557430888798830399ULL;
-const unsigned long not_column_ab = 18229723555195321596ULL;
-const unsigned long row_2 = 71776119061217280UL;
-const unsigned long row_7 = 65280UL;
-const unsigned long not_row_12 = 281474976710655UL;
-const unsigned long not_row_78 = 18446744073709486080UL;
-unsigned long black_pieces;
-unsigned long white_pieces;
-unsigned long any_pieces;
+const bitboard not_column_a = 18374403900871474942ULL;
+const bitboard not_column_h = 9187201950435737471ULL;
+const bitboard not_column_hg = 4557430888798830399ULL;
+const bitboard not_column_ab = 18229723555195321596ULL;
+const bitboard row_2 = 71776119061217280UL;
+const bitboard row_7 = 65280UL;
+const bitboard not_row_12 = 281474976710655UL;
+const bitboard not_row_78 = 18446744073709486080UL;
+bitboard black_pieces;
+bitboard white_pieces;
+bitboard any_pieces;
 
 //Tablas con los movimientos de las piezas
-unsigned long knight_move_table[64];
-unsigned long king_move_table[64];
+bitboard knight_move_table[64];
+bitboard king_move_table[64];
 //En el caso de los peones cada color tiene sus propias tablas
-unsigned long pawn_pushes_table[2][64];
-unsigned long pawn_attacks_table[2][64];
-unsigned long pawn_promotion_pushes_table[2][64];
-unsigned long pawn_promotion_attacks_table[2][64];
+bitboard pawn_pushes_table[2][64];
+bitboard pawn_attacks_table[2][64];
+bitboard pawn_promotion_pushes_table[2][64];
+bitboard pawn_promotion_attacks_table[2][64];
 
 //Inicializa una lista de movimientos
 static moveList *create_move_list(){
@@ -39,7 +39,7 @@ static moveList *create_move_list(){
 }
 
 //Añade elemento a la lista de elementos
-static void addElement(moveList *l,unsigned char from, unsigned char  to, unsigned  capture, unsigned long enpassantsquare,
+static void addElement(moveList *l,unsigned char from, unsigned char  to, unsigned  capture, bitboard enpassantsquare,
                 unsigned enpassant, unsigned  promotion, unsigned  castling, unsigned piece){
     unsigned short nElements = l->nElements;
 
@@ -81,10 +81,10 @@ static unmake_info pop_unmake(){
     return unmake;
 }
 //Generar movimiento de los peones(Vamos a generarlos al inicio de la ejecución del engine)
-static unsigned long generate_pawn_pushes(int square, unsigned side){
-    unsigned long moves = 0UL;
+static bitboard generate_pawn_pushes(int square, unsigned side){
+    bitboard moves = 0UL;
 
-    unsigned long board = 0UL;
+    bitboard board = 0UL;
 
     set_bit(board, square);
     if(side == WHITE){
@@ -102,9 +102,9 @@ static unsigned long generate_pawn_pushes(int square, unsigned side){
     return moves;
 }
 
-static unsigned long generate_pawn_attacks(int square, unsigned side){
-    unsigned long moves = 0UL;
-    unsigned long board = 0UL;
+static bitboard generate_pawn_attacks(int square, unsigned side){
+    bitboard moves = 0UL;
+    bitboard board = 0UL;
     set_bit(board, square);
     if(side == WHITE){
         //Omitimos las dos ultimas filas(coronación)
@@ -122,10 +122,10 @@ static unsigned long generate_pawn_attacks(int square, unsigned side){
     }
     return moves;
 }
-static unsigned long generate_pawn_promotion_pushes(int square, unsigned side){
-    unsigned long moves = 0UL;
+static bitboard generate_pawn_promotion_pushes(int square, unsigned side){
+    bitboard moves = 0UL;
 
-    unsigned long board = 0UL;
+    bitboard board = 0UL;
 
     set_bit(board, square);
 
@@ -144,9 +144,9 @@ static unsigned long generate_pawn_promotion_pushes(int square, unsigned side){
     return moves;
 }
 
-static unsigned long generate_pawn_promotion_attacks(int square, unsigned side){
-    unsigned long moves = 0UL;
-    unsigned long board = 0UL;
+static bitboard generate_pawn_promotion_attacks(int square, unsigned side){
+    bitboard moves = 0UL;
+    bitboard board = 0UL;
     set_bit(board, square);
     if(side == WHITE){
         //Solo penultima fila(coronación)
@@ -165,10 +165,10 @@ static unsigned long generate_pawn_promotion_attacks(int square, unsigned side){
     return moves;
 }
 //Genera el movimiento de los caballos
-static unsigned long generate_knight_moves(int square){
-    unsigned long moves = 0UL;
+static bitboard generate_knight_moves(int square){
+    bitboard moves = 0UL;
 
-    unsigned long board = 0UL;
+    bitboard board = 0UL;
     set_bit(board, square);
     //Generar movimientos del caballo
     if ((board >> 17) & not_column_h) moves |= (board >> 17);
@@ -184,9 +184,9 @@ static unsigned long generate_knight_moves(int square){
 }
 
 //Genera el movimiento de los reyes
-static unsigned long generate_king_moves(int square){
-    unsigned long moves = 0UL;
-    unsigned long board = 0UL;
+static bitboard generate_king_moves(int square){
+    bitboard moves = 0UL;
+    bitboard board = 0UL;
     set_bit(board, square);
 
     //Generar movimientos del rey
@@ -226,9 +226,9 @@ void generate_move_tables(){
 
 
 //Calcular ataque del alfil
-static unsigned long bishop_moves(int square, unsigned long all_pieces)
+static bitboard bishop_moves(int square, bitboard all_pieces)
 {
-    unsigned long moves = 0UL;
+    bitboard moves = 0UL;
 
     int f, r;
 
@@ -265,9 +265,9 @@ static unsigned long bishop_moves(int square, unsigned long all_pieces)
 }
 
 //Calcular ataque de la torre
-static unsigned long rook_moves(int square, unsigned long all_pieces)
+static bitboard rook_moves(int square, bitboard all_pieces)
 {
-    unsigned long moves = 0UL;
+    bitboard moves = 0UL;
     int f, r;
 
     //Calcular fila y columna
@@ -312,13 +312,13 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     white_pieces = b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
     any_pieces = black_pieces | white_pieces;
 
-    unsigned long aux;
-    unsigned long pawn_attacks;
-    unsigned long enpassant_attacks;
-    unsigned long promotion_pushes;
-    unsigned long promotion_attacks;
+    bitboard aux;
+    bitboard pawn_attacks;
+    bitboard enpassant_attacks;
+    bitboard promotion_pushes;
+    bitboard promotion_attacks;
     //Peones negros
-    unsigned long BP = b->BP;
+    bitboard BP = b->BP;
     while(BP){
         from = get_ls1b_index(BP);
         //Avance peones
@@ -331,7 +331,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
         //Avance dos casillas
         if((from < 16) && ((~any_pieces>>from+8)&1) && ((~any_pieces>>from+16)&1)){
             to = from + 16;
-            addElement(mL, from, to, 0, 1UL<<to, 0, 0, 0, PAWN);
+            addElement(mL, from, to, 0, 1ULL<<to, 0, 0, 0, PAWN);
         }
 
         //Captura peones
@@ -372,7 +372,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     }
 
     //Caballos negros
-    unsigned long BN = b->BN;
+    bitboard BN = b->BN;
     while(BN){
         //Bitboard con los posibles movimientos de los caballos
         from = get_ls1b_index(BN);
@@ -401,7 +401,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     }
 
     //Torres negras
-    unsigned long BR = b->BR;
+    bitboard BR = b->BR;
     while(BR){
         from = get_ls1b_index(BR);
         //Calculamos los posibles movimientos de la torre
@@ -417,7 +417,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     }
 
     //Alfiles negros
-    unsigned long BB = b->BB;
+    bitboard BB = b->BB;
     while(BB){
         from = get_ls1b_index(BB);
         //Calculamos los posibles movimientos de la torre
@@ -433,7 +433,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     }
 
     //Reina negra
-    unsigned long BQ = b->BQ;
+    bitboard BQ = b->BQ;
     while(BQ){
         from = get_ls1b_index(BQ);
         //Calculamos los movimientos de la reina
@@ -483,14 +483,14 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     white_pieces = b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
     any_pieces = black_pieces | white_pieces;
 
-    unsigned long aux;
-    unsigned long pawn_attacks;
-    unsigned long enpassant_attacks;
-    unsigned long promotion_pushes;
-    unsigned long promotion_attacks;
+    bitboard aux;
+    bitboard pawn_attacks;
+    bitboard enpassant_attacks;
+    bitboard promotion_pushes;
+    bitboard promotion_attacks;
 
     //Peones blancos
-    unsigned long WP = b->WP;
+    bitboard WP = b->WP;
     while(WP){
         from = get_ls1b_index(WP);
         //Avance peones
@@ -503,7 +503,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
         //Avance dos casillas
         if((from > 47) && ((~any_pieces>>from-8)&1) && ((~any_pieces>>from-16)&1)){
             to = from - 16;
-            addElement(mL, from, to, 0, 1UL<<to, 0, 0, 0, PAWN);
+            addElement(mL, from, to, 0, 1ULL<<to, 0, 0, 0, PAWN);
         }
 
         //Captura peones
@@ -547,7 +547,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     }
 
     //Caballos blancos
-    unsigned long WN = b->WN;
+    bitboard WN = b->WN;
     while(WN){
         //Bitboard con los posibles movimientos de los caballos
         from = get_ls1b_index(WN);
@@ -576,7 +576,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     }
 
     //Torres blancas
-    unsigned long WR = b->WR;
+    bitboard WR = b->WR;
     while(WR){
         from = get_ls1b_index(WR);
         //Calculamos los posibles movimientos de la torre
@@ -592,7 +592,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     }
 
     //Alfiles blancos
-    unsigned long WB = b->WB;
+    bitboard WB = b->WB;
     while(WB){
         from = get_ls1b_index(WB);
         //Calculamos los posibles movimientos de los alfiles
@@ -608,7 +608,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
     }
 
     //Reina blanca
-    unsigned long WQ = b->WQ;
+    bitboard WQ = b->WQ;
     while(WQ){
         from = get_ls1b_index(WQ);
         //Calculamos los movimientos de la reina

@@ -25,8 +25,8 @@ void initialize_empty_board(board *b){
 }
 
 //Escribe un 1 posición indicada(la primera es el 0)
-unsigned long char_to_bitboard(int chess_box) {
-    unsigned long value = 0b1;
+bitboard char_to_bitboard(int chess_box) {
+    bitboard value = 0b1;
     //Corremos la cifra hasta el valor adecuado
     value = value << chess_box;
     return value;
@@ -284,7 +284,7 @@ void importFEN(char *fen, board *b){
 
 }
 
-void print_bitboard(unsigned long b) {
+void print_bitboard(bitboard b) {
     //Convertir bitboard a caracteres
     char charBoard[8][8] = {[0 ... 7][0 ... 7] = '-'};
     for (int i = 0; i < 64; i++) {

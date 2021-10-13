@@ -4,8 +4,11 @@
 
 #ifndef CHESSENGINEC_MAGIC_BITBOARDS_H
 #define CHESSENGINEC_MAGIC_BITBOARDS_H
-unsigned long get_rook_attacks(unsigned char square, unsigned long occupancy);
-unsigned long get_bishop_attacks(unsigned char square, unsigned long occupancy);
+
+#include "bitops.h"
+
+bitboard get_rook_attacks(unsigned char square, bitboard occupancy);
+bitboard get_bishop_attacks(unsigned char square, bitboard occupancy);
 void init_sliders_attacks(int is_bishop);
 
 #endif //CHESSENGINEC_MAGIC_BITBOARDS_H

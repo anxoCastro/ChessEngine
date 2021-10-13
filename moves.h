@@ -24,7 +24,7 @@ typedef struct move{
     //6 Nada
     unsigned piece;
     //Bitboard del peón donde se podrá hacer captura al paso
-    unsigned long enpassantsquare;
+    bitboard enpassantsquare;
 
     //0 si no puede haber captura al paso
     //1 si puede haber captura al paso
@@ -70,7 +70,7 @@ typedef struct unmake_info{
     //5 king
     unsigned capture_piece;
     unsigned capture_enpassant;
-    unsigned long enpassant_square;
+    bitboard enpassant_square;
 }unmake_info;
 
 //Pila con los datos para deshacer los movimientos

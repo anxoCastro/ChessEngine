@@ -5,17 +5,17 @@
 #include <stdlib.h>
 #include "zobrist.h"
 #include "bitops.h"
-unsigned long piece_keys[64][6][2];
-unsigned long enpassant_keys[64];
-unsigned long castle_keys[4];
-unsigned long side_key;
+bitboard piece_keys[64][6][2];
+bitboard enpassant_keys[64];
+bitboard castle_keys[4];
+bitboard side_key;
 
-unsigned long random_64bits(){
-    return (unsigned long)rand() | (unsigned long) (rand() << 16 ) |
-     ((unsigned long)rand() << 32) |  ((unsigned long)rand() << 48);
+bitboard random_64bits(){
+    return (bitboard)rand() | (bitboard) (rand() << 16 ) |
+     ((bitboard)rand() << 32) |  ((bitboard)rand() << 48);
 }
 
-unsigned long init_keys(){
+bitboard init_keys(){
     //Inicializar claves zobrist
     for(int i = 0; i < 64; i++){
         for(int j = 0; j < 6; j++){
@@ -31,9 +31,9 @@ unsigned long init_keys(){
     side_key = random_64bits();
 }
 
-unsigned long generate_hash(board b){
-    unsigned long hash = 0UL;
-    unsigned long aux;
+bitboard generate_hash(board b){
+    bitboard hash = 0UL;
+    bitboard aux;
     int square;
 
     //Peones blancos

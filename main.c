@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
                 }
             }
             else{
-                do_perft(6, DEFAULT_FEN);
+                do_perft(7, DEFAULT_FEN);
             }
             continue;
         }
