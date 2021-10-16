@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "moves.h"
-#include "board.h"
-#include "bitops.h"
 #include "zobrist.h"
-#include "magic_bitboards.h"
 
 
 unmake_stack stack;
@@ -14,10 +9,10 @@ const bitboard not_column_a = 18374403900871474942ULL;
 const bitboard not_column_h = 9187201950435737471ULL;
 const bitboard not_column_hg = 4557430888798830399ULL;
 const bitboard not_column_ab = 18229723555195321596ULL;
-const bitboard row_2 = 71776119061217280UL;
-const bitboard row_7 = 65280UL;
-const bitboard not_row_12 = 281474976710655UL;
-const bitboard not_row_78 = 18446744073709486080UL;
+const bitboard row_2 = 71776119061217280ULL;
+const bitboard row_7 = 65280ULL;
+const bitboard not_row_12 = 281474976710655ULL;
+const bitboard not_row_78 = 18446744073709486080ULL;
 bitboard black_pieces;
 bitboard white_pieces;
 bitboard any_pieces;
@@ -31,12 +26,7 @@ bitboard pawn_attacks_table[2][64];
 bitboard pawn_promotion_pushes_table[2][64];
 bitboard pawn_promotion_attacks_table[2][64];
 
-//Inicializa una lista de movimientos
-static moveList *create_move_list(){
-    moveList *list = malloc(sizeof(moveList));
-    list->nElements = 0;
-    return list;
-}
+
 
 //Añade elemento a la lista de elementos
 static void addElement(moveList *l,unsigned char from, unsigned char  to, unsigned  capture, bitboard enpassantsquare,
@@ -82,9 +72,9 @@ static unmake_info pop_unmake(){
 }
 //Generar movimiento de los peones(Vamos a generarlos al inicio de la ejecución del engine)
 static bitboard generate_pawn_pushes(int square, unsigned side){
-    bitboard moves = 0UL;
+    bitboard moves = 0ULL;
 
-    bitboard board = 0UL;
+    bitboard board = 0ULL;
 
     set_bit(board, square);
     if(side == WHITE){
@@ -103,8 +93,8 @@ static bitboard generate_pawn_pushes(int square, unsigned side){
 }
 
 static bitboard generate_pawn_attacks(int square, unsigned side){
-    bitboard moves = 0UL;
-    bitboard board = 0UL;
+    bitboard moves = 0ULL;
+    bitboard board = 0ULL;
     set_bit(board, square);
     if(side == WHITE){
         //Omitimos las dos ultimas filas(coronación)
@@ -123,9 +113,9 @@ static bitboard generate_pawn_attacks(int square, unsigned side){
     return moves;
 }
 static bitboard generate_pawn_promotion_pushes(int square, unsigned side){
-    bitboard moves = 0UL;
+    bitboard moves = 0ULL;
 
-    bitboard board = 0UL;
+    bitboard board = 0ULL;
 
     set_bit(board, square);
 
@@ -145,8 +135,8 @@ static bitboard generate_pawn_promotion_pushes(int square, unsigned side){
 }
 
 static bitboard generate_pawn_promotion_attacks(int square, unsigned side){
-    bitboard moves = 0UL;
-    bitboard board = 0UL;
+    bitboard moves = 0ULL;
+    bitboard board = 0ULL;
     set_bit(board, square);
     if(side == WHITE){
         //Solo penultima fila(coronación)
@@ -166,9 +156,9 @@ static bitboard generate_pawn_promotion_attacks(int square, unsigned side){
 }
 //Genera el movimiento de los caballos
 static bitboard generate_knight_moves(int square){
-    bitboard moves = 0UL;
+    bitboard moves = 0ULL;
 
-    bitboard board = 0UL;
+    bitboard board = 0ULL;
     set_bit(board, square);
     //Generar movimientos del caballo
     if ((board >> 17) & not_column_h) moves |= (board >> 17);
@@ -185,8 +175,8 @@ static bitboard generate_knight_moves(int square){
 
 //Genera el movimiento de los reyes
 static bitboard generate_king_moves(int square){
-    bitboard moves = 0UL;
-    bitboard board = 0UL;
+    bitboard moves = 0ULL;
+    bitboard board = 0ULL;
     set_bit(board, square);
 
     //Generar movimientos del rey
@@ -225,84 +215,6 @@ void generate_move_tables(){
 }
 
 
-//Calcular ataque del alfil
-static bitboard bishop_moves(int square, bitboard all_pieces)
-{
-    bitboard moves = 0UL;
-
-    int f, r;
-
-    //Calcular fila y columna
-    int tr = square / 8;
-    int tf = square % 8;
-
-    // generate attacks
-    for (r = tr + 1, f = tf + 1; r <= 7 && f <= 7; r++, f++)
-    {
-        moves |= (1ULL << (r * 8 + f));
-        if (all_pieces & (1ULL << (r * 8 + f))) break;
-    }
-
-    for (r = tr + 1, f = tf - 1; r <= 7 && f >= 0; r++, f--)
-    {
-        moves |= (1ULL << (r * 8 + f));
-        if (all_pieces & (1ULL << (r * 8 + f))) break;
-    }
-
-    for (r = tr - 1, f = tf + 1; r >= 0 && f <= 7; r--, f++)
-    {
-        moves |= (1ULL << (r * 8 + f));
-        if (all_pieces & (1ULL << (r * 8 + f))) break;
-    }
-
-    for (r = tr - 1, f = tf - 1; r >= 0 && f >= 0; r--, f--)
-    {
-        moves |= (1ULL << (r * 8 + f));
-        if (all_pieces & (1ULL << (r * 8 + f))) break;
-    }
-
-    return moves;
-}
-
-//Calcular ataque de la torre
-static bitboard rook_moves(int square, bitboard all_pieces)
-{
-    bitboard moves = 0UL;
-    int f, r;
-
-    //Calcular fila y columna
-    int tr = square / 8;
-    int tf = square % 8;
-
-    // generate attacks
-    for (r = tr + 1; r <= 7; r++)
-    {
-        moves |= (1ULL << (r * 8 + tf));
-        if (all_pieces & (1ULL << (r * 8 + tf))) break;
-    }
-
-    for (r = tr - 1; r >= 0; r--)
-    {
-        moves |= (1ULL << (r * 8 + tf));
-        if (all_pieces & (1ULL << (r * 8 + tf))) break;
-    }
-
-    for (f = tf + 1; f <= 7; f++)
-    {
-        moves |= (1ULL << (tr * 8 + f));
-        if (all_pieces & (1ULL << (tr * 8 + f))) break;
-    }
-
-    for (f = tf - 1; f >= 0; f--)
-    {
-        moves |= (1ULL << (tr * 8 + f));
-        if (all_pieces & (1ULL << (tr * 8 + f))) break;
-    }
-
-    return moves;
-}
-
-
 moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
     //Posición inicial y final de la pieza movida
     unsigned char from;
@@ -329,7 +241,7 @@ moveList *generate_black_moves(board *b, move lastMove, moveList *mL){
             addElement(mL, from, to, 0, 0, 0, 0, 0, PAWN);
         }
         //Avance dos casillas
-        if((from < 16) && ((~any_pieces>>from+8)&1) && ((~any_pieces>>from+16)&1)){
+        if((from < 16) && ((~any_pieces>>(from+8))&1) && ((~any_pieces>>(from+16))&1)){
             to = from + 16;
             addElement(mL, from, to, 0, 1ULL<<to, 0, 0, 0, PAWN);
         }
@@ -501,7 +413,7 @@ moveList *generate_white_moves(board *b, move lastMove, moveList *mL){
             addElement(mL, from, to, 0, 0, 0, 0, 0, PAWN);
         }
         //Avance dos casillas
-        if((from > 47) && ((~any_pieces>>from-8)&1) && ((~any_pieces>>from-16)&1)){
+        if((from > 47) && ((~any_pieces>>(from-8))&1) && ((~any_pieces>>(from-16))&1)){
             to = from - 16;
             addElement(mL, from, to, 0, 1ULL<<to, 0, 0, 0, PAWN);
         }
@@ -1006,7 +918,7 @@ void unmake_move(board *b, move m){
     else b->side = WHITE;
     //Actualizar hash de posibilidad de captura al paso
     if(m.enpassantsquare){
-        b->hash ^= enpassant_keys[get_ls1b_index(m.enpassantsquare)];
+        //b->hash ^= enpassant_keys[get_ls1b_index(m.enpassantsquare)];
     }
     //Actualizar hash turno
     struct unmake_info unmakeInfo = pop_unmake();
@@ -1357,7 +1269,7 @@ void string_to_move(char *string, move *m, board *b){
     char *work = string;
 
     //Origen
-    m->from = (*work++ - 'a') +  (('1' + 7 -*work++)* 8);
+    m->from = (*work++ - 'a') + (('1' + 7 -*work++)* 8);
     //Destino
     m->to = (*work++ - 'a') + (('1' + 7 - *work++) * 8);
 

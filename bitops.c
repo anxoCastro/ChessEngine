@@ -33,6 +33,9 @@ unsigned char get_ls1b_index(bitboard b)
         //Contar bits corridos antes de encontrar un 1
         return count_bits((b & -b) - 1);
     }
+    else{
+        return 255;
+    }
 
     /*unsigned char ls1b = __builtin_ffsll(b);
     if(ls1b)

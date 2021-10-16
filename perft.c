@@ -6,13 +6,11 @@
 #include <stdlib.h>
 #include "perft.h"
 #include "moves.h"
-#include "board.h"
 #include "zobrist.h"
 #include <string.h>
 #include <sys/time.h>
 
 unsigned long long leafs;
-moveList m;
 long get_time_ms() {
     struct timeval time_value;
     gettimeofday(&time_value, NULL);
@@ -84,5 +82,5 @@ void do_perft(int depth, char *fen){
     if(old_hash == b.hash){
         printf("Los hash coinciden :)\n");
     }
-    printf("Tiempo: %f segundos %f MN/s \n", ( end - start)/ (float)1000,( leafs / (float) 1000) / ((float)(end - start)));
+    printf("Tiempo: %f segundos %f MN/s \n", (float)( end - start)/ (float)1000,( (float) leafs / (float) 1000) / ((float)(end - start)));
 }

@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/tmp/tmp.TyFBY6B3Fa/bitops.h
+
+/tmp/tmp.TyFBY6B3Fa/board.h
+bitops.h
+/tmp/tmp.TyFBY6B3Fa/bitops.h
+
+/tmp/tmp.TyFBY6B3Fa/magic_bitboards.h
+bitops.h
+/tmp/tmp.TyFBY6B3Fa/bitops.h
+
+/tmp/tmp.TyFBY6B3Fa/moves.c
+stdio.h
+-
+stdlib.h
+-
+moves.h
+/tmp/tmp.TyFBY6B3Fa/moves.h
+board.h
+/tmp/tmp.TyFBY6B3Fa/board.h
+bitops.h
+/tmp/tmp.TyFBY6B3Fa/bitops.h
+zobrist.h
+/tmp/tmp.TyFBY6B3Fa/zobrist.h
+magic_bitboards.h
+/tmp/tmp.TyFBY6B3Fa/magic_bitboards.h
+
+/tmp/tmp.TyFBY6B3Fa/moves.h
+board.h
+/tmp/tmp.TyFBY6B3Fa/board.h
+magic_bitboards.h
+/tmp/tmp.TyFBY6B3Fa/magic_bitboards.h
+
+/tmp/tmp.TyFBY6B3Fa/zobrist.h
+board.h
+/tmp/tmp.TyFBY6B3Fa/board.h
+

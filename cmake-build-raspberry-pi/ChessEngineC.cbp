@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="ChessEngineC"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ChessEngineC">
+				<Option output="/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/ChessEngineC" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/arm-linux-gnueabihf/8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/arm-linux-gnueabihf/8/include-fixed"/>
+					<Add directory="/usr/include/arm-linux-gnueabihf"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 ChessEngineC"/>
+					<CompileFile command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ChessEngineC/fast">
+				<Option output="/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/ChessEngineC" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/lib/gcc/arm-linux-gnueabihf/8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/arm-linux-gnueabihf/8/include-fixed"/>
+					<Add directory="/usr/include/arm-linux-gnueabihf"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 ChessEngineC/fast"/>
+					<CompileFile command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/bin/make -f &quot;/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/bitops.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/bitops.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/board.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/board.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/eval.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/eval.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/magic_bitboards.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/magic_bitboards.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/main.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/moves.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/moves.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/perft.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/perft.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/search.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/search.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/transposition.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/transposition.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/uci.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/uci.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/zobrist.c">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/zobrist.h">
+			<Option target="ChessEngineC"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.TyFBY6B3Fa/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

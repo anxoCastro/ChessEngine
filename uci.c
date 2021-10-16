@@ -58,6 +58,7 @@ void uci_loop(board *b){
     //Aquí irán opciones disponibles
     printf("uciok\n");
     move lastMove;
+    initMove(&lastMove);
     while(1){
         //Resetear la linea
         memset(input, 0, sizeof(input));

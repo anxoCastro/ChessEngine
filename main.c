@@ -19,10 +19,7 @@ int main(int argc, char *argv[]) {
     init_keys();
     initBoard(&b);
     b.hash = generate_hash(b);
-    move lastMove;
-    /*while(1){
-        lastMove = search_position(&b, 6, lastMove);
-    }*/
+
     //Inicializar hash
     b.hash = generate_hash(b);
     while(1){
@@ -52,13 +49,13 @@ int main(int argc, char *argv[]) {
                             int depth = atoi(split);
                             do_perft(depth, fen);
                         } else {
-                            do_perft(5, fen);
+                            do_perft(7, fen);
                         }
                     }
                 }
             }
             else{
-                do_perft(5, DEFAULT_FEN);
+                do_perft(6, DEFAULT_FEN);
             }
             continue;
         }

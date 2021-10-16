@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "board.h"
-#include "bitops.h"
 
 void initialize_empty_board(board *b){
     b->WP = 0;
@@ -90,7 +89,7 @@ void initBoard(board *b) {
 
             }
         }
-    };
+    }
     //Empiezan las blancas
     b->side = WHITE;
     //Inicializar enroques
@@ -127,7 +126,7 @@ void printBoard(board b) {
     printf("\n           A B C D E F G H\n\n");
     printf("White castling: %u %u\n", b.castle[0], b.castle[1]);
     printf("Black castling: %u %u\n", b.castle[2], b.castle[3]);
-    printf("Hash: %lu\n", b.hash);
+    printf("Hash: %llu\n", b.hash);
 }
 
 int piece_square(unsigned char square, board *b){
@@ -233,20 +232,20 @@ void importFEN(char *fen, board *b){
                     break;
 
             }
-            *fen++;
+            fen++;
         }
     }
     b->black_pieces = b->BP | b->BN | b->BB | b->BR | b->BQ | b->BK;
     b->white_pieces =  b->WP | b->WN | b->WB | b->WR | b->WQ | b->WK;
-    b->any_pieces = b->white_pieces | b->white_pieces;
+    b->any_pieces = b->white_pieces | b->black_pieces;
     //Espacio en blanco del lado que juega
-    *fen++;
+    fen++;
     //Marcar lado que juega
     if(*fen == 'w') b->side = WHITE;
     else b->side = BLACK;
     //Saltar a enroques
-    *fen++;
-    *fen++;
+    fen++;
+    fen++;
     //Setear enroques
     while(*fen != ' '){
         switch(*fen){
@@ -265,10 +264,10 @@ void importFEN(char *fen, board *b){
             case '-':
                 break;
         }
-        *fen++;
+        fen++;
 
     }
-    *fen++;
+    fen++;
     //Captura al paso
     if(*fen != '-'){
         int i = fen[0] - 'a';
@@ -279,7 +278,7 @@ void importFEN(char *fen, board *b){
         }else{
             square-=8;
         }
-        b->enpassant_square  = 1UL << square;
+        b->enpassant_square  = 1ULL << square;
     }
 
 }

@@ -11,7 +11,7 @@ extern bitboard enpassant_keys[64];
 extern bitboard castle_keys[4];
 extern bitboard side_key;
 
-bitboard init_keys();
+void init_keys();
 bitboard generate_hash(board b);
 #endif //CHESSENGINEC_ZOBRIST_H
 

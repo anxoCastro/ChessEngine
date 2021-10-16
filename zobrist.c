@@ -15,7 +15,7 @@ bitboard random_64bits(){
      ((bitboard)rand() << 32) |  ((bitboard)rand() << 48);
 }
 
-bitboard init_keys(){
+void init_keys(){
     //Inicializar claves zobrist
     for(int i = 0; i < 64; i++){
         for(int j = 0; j < 6; j++){
@@ -32,7 +32,7 @@ bitboard init_keys(){
 }
 
 bitboard generate_hash(board b){
-    bitboard hash = 0UL;
+    bitboard hash = 0ULL;
     bitboard aux;
     int square;
 

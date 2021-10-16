@@ -4,9 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "search.h"
-#include "board.h"
 #include "eval.h"
 #include "moves.h"
 unsigned long long nodes;
@@ -91,7 +89,6 @@ int do_negamax(board *b, int depth, move lastMove){
         }
         lastMove = m.list[i];
         int score = -negamax(b, -beta, -alpha, depth - 1, lastMove);
-
         unmake_move(b, m.list[i]);
         legal_moves++;
         //Poda beta

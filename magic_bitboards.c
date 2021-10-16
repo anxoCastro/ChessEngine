@@ -174,7 +174,7 @@ int bishop_rellevant_bits[64] = {
 
 //Generar mascara movimientos torre
 bitboard generate_rook_mask(int square){
-    bitboard moves = 0UL;
+    bitboard moves = 0ULL;
     int i;
 
     //Calcular fila y columna
@@ -317,7 +317,7 @@ void init_sliders_attacks(int is_bishop)
             {
                 // init occupancies, magic index & attacks
                 bitboard occupancy = set_occupancy(count, bit_count, mask);
-                bitboard magic_index = occupancy * bishop_magics[square] >> 64 - bishop_rellevant_bits[square];
+                bitboard magic_index = occupancy * bishop_magics[square] >> (64 - bishop_rellevant_bits[square]);
                 bishop_attacks[square][magic_index] = bishop_attacks_on_the_fly(square, occupancy);
             }
 
@@ -326,7 +326,7 @@ void init_sliders_attacks(int is_bishop)
             {
                 // init occupancies, magic index & attacks
                 bitboard occupancy = set_occupancy(count, bit_count, mask);
-                bitboard magic_index = occupancy * rook_magics[square] >> 64 - rook_rellevant_bits[square];
+                bitboard magic_index = occupancy * rook_magics[square] >> (64 - rook_rellevant_bits[square]);
                 rook_attacks[square][magic_index] = rook_attacks_on_the_fly(square, occupancy);
             }
         }

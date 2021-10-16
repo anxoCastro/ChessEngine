@@ -1,0 +1,4 @@
+/usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/bin/make -DCMAKE_C_COMPILER=/bin/gcc -G "CodeBlocks - Unix Makefiles" /tmp/tmp.TyFBY6B3Fa
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi
