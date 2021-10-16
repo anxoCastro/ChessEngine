@@ -918,7 +918,7 @@ void unmake_move(board *b, move m){
     else b->side = WHITE;
     //Actualizar hash de posibilidad de captura al paso
     if(m.enpassantsquare){
-        //b->hash ^= enpassant_keys[get_ls1b_index(m.enpassantsquare)];
+        b->hash ^= enpassant_keys[get_ls1b_index(m.enpassantsquare)];
     }
     //Actualizar hash turno
     struct unmake_info unmakeInfo = pop_unmake();
