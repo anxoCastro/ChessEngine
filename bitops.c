@@ -28,19 +28,19 @@ unsigned char count_bits(bitboard b) {
 //Devuelve la posicion del primer 1 de la tabla(255 si es un bitboard vacio)
 unsigned char get_ls1b_index(bitboard b)
 {
-    if (b)
+    /*if (b)
     {
         //Contar bits corridos antes de encontrar un 1
         return count_bits((b & -b) - 1);
     }
     else{
         return 255;
-    }
+    }*/
 
-    /*unsigned char ls1b = __builtin_ffsll(b);
+    unsigned char ls1b = __builtin_ffsll(b);
     if(ls1b)
         return ls1b - 1;
-    else return 255;*/
+    else return 255;
 }
 
 // set occupancies

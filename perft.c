@@ -7,15 +7,10 @@
 #include "perft.h"
 #include "moves.h"
 #include "zobrist.h"
-#include <string.h>
-#include <sys/time.h>
+#include "time.h"
 
 unsigned long long leafs;
-long get_time_ms() {
-    struct timeval time_value;
-    gettimeofday(&time_value, NULL);
-    return time_value.tv_sec * 1000 + time_value.tv_usec / 1000;
-}
+
 void perft(board *b, int depth, move lastMove){
     if(depth == 0){
         leafs++;
@@ -37,11 +32,9 @@ void perft(board *b, int depth, move lastMove){
         perft(b, depth - 1, lastMove);
         unmake_move(b, m.list[i]);
     }
-    //free(m);
 }
 
 void do_perft(int depth, char *fen){
-    //printf("\n      Perft con profundidad: %i\n\n", depth);
     board b;
     importFEN(fen, &b);
     move lastMove;
@@ -74,7 +67,6 @@ void do_perft(int depth, char *fen){
         unmake_move(&b, m.list[i]);
     }
     long end = get_time_ms();
-    //printf("\n  Numero de posiciones finales totales: %lu\n", leafs);
     printf("\n%llu\n", leafs);
     //free(m);
     free(string);

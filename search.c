@@ -7,9 +7,12 @@
 #include "search.h"
 #include "eval.h"
 #include "moves.h"
+#include "time.h"
 unsigned long long nodes;
 move best_move;
 int ply;
+
+
 int negamax(board *b, int alpha, int beta, int depth, move lastMove){
     if(depth == 0){
         return evaluation(*b);
@@ -68,9 +71,8 @@ int negamax(board *b, int alpha, int beta, int depth, move lastMove){
             return 0;
         }
     }
-    // found better move
+    //Encontrado mejor movimiento
     if (old_alpha != alpha)
-        // init best move
         best_move = best_sofar;
     return alpha;
 
@@ -79,11 +81,17 @@ int negamax(board *b, int alpha, int beta, int depth, move lastMove){
 move search_position(board *b, int depth, move lastMove){
     nodes = 0;
     initMove(&best_move);
-    negamax(b, -50000, 50000, depth, lastMove);
+
+    long start = get_time_ms();
+    int score = negamax(b, -50000, 50000, depth, lastMove);
+    long end = get_time_ms();
 
     char *string_move = malloc(sizeof(char) * 5);
     move_to_string(&best_move, string_move);
+
+    printf("info score cp %i depth %i time %ld nodes %llu nps %.0f\n", score, depth,(end-start), nodes, ((float)nodes/(float)(end-start))*1000);
     printf("bestmove %s\n", string_move);
     free(string_move);
+
     return best_move;
 }

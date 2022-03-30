@@ -1,4 +1,3 @@
-
 chessengine
 cmake-build-debug/ChessEngineC
 cmake-build-debug/ChessEngineC.cbp
@@ -122,3 +121,4 @@ cmake-build-debug-coverage/CMakeFiles/ChessEngineC.dir/uci.c.gcda
 cmake-build-debug-coverage/CMakeFiles/ChessEngineC.dir/zobrist.c.gcda
 cmake-build-debug-coverage/Testing/Temporary/LastTest.log
 cmake-build-debug/ChessEngineC.exe
+*.o

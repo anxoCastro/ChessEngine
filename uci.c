@@ -74,7 +74,7 @@ void uci_loop(board *b){
         }
 
         if(strncmp(input, "go", 2) == 0){
-            lastMove = search_position(b, 5, lastMove);
+            lastMove = search_position(b, 7, lastMove);
             continue;
         }
 

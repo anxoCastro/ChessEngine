@@ -12,6 +12,8 @@
 #define ROOK_SCORE 500
 #define QUEEN_SCORE 1000
 #define KING_SCORE 100000
-int evaluation(board b);
+
+void init_eval_tables();
+double evaluation(board b);
 
 #endif //CHESSENGINEC_EVAL_H

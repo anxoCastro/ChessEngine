@@ -1269,9 +1269,11 @@ void string_to_move(char *string, move *m, board *b){
     char *work = string;
 
     //Origen
-    m->from = (*work++ - 'a') + (('1' + 7 -*work++)* 8);
+    m->from = (*work++ - 'a');
+    m->from += (('1' + 7 -*work++)* 8);
     //Destino
-    m->to = (*work++ - 'a') + (('1' + 7 - *work++) * 8);
+    m->to = (*work++ - 'a');
+    m->from += (('1' + 7 - *work++) * 8);
 
     //Enroque largo
     if((get_bit(b->WK, m->from) || get_bit(b->BK, m->from)) && (m->from - m->to)== 2){
