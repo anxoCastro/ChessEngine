@@ -1,2 +1,0 @@
-- Representación del tablero mediante bitboards
-- Magic bitboards para generación de movimientos de torres, alfiles y reinas

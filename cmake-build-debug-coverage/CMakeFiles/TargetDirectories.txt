@@ -1,3 +1,0 @@
-E:/Anxo/Documents/GitHub/ChessEngine/cmake-build-debug-coverage/CMakeFiles/ChessEngineC.dir
-E:/Anxo/Documents/GitHub/ChessEngine/cmake-build-debug-coverage/CMakeFiles/edit_cache.dir
-E:/Anxo/Documents/GitHub/ChessEngine/cmake-build-debug-coverage/CMakeFiles/rebuild_cache.dir

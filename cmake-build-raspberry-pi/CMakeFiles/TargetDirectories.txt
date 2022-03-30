@@ -1,3 +1,0 @@
-/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/CMakeFiles/rebuild_cache.dir
-/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/CMakeFiles/ChessEngineC.dir
-/tmp/tmp.TyFBY6B3Fa/cmake-build-raspberry-pi/CMakeFiles/edit_cache.dir
