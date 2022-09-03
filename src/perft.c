@@ -36,6 +36,7 @@ void perft(board *b, int depth, move lastMove){
 
 void do_perft(int depth, char *fen){
     board b;
+    leafs = 0;
     importFEN(fen, &b);
     move lastMove;
     initMove(&lastMove);
