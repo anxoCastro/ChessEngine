@@ -8,3 +8,6 @@ clean:
 	
 debug:
 	cd src && gcc -Wall -g -Ofast -o ../chessengine_debug main.c board.c bitops.c moves.c perft.c magic_bitboards.c zobrist.c uci.c search.c eval.c time.c
+
+perft_debug:
+	cd src && gcc -Wall -Ofast -o ../chessengine_perft main_debug_perft.c board.c bitops.c moves.c perft.c magic_bitboards.c zobrist.c uci.c search.c eval.c time.c
