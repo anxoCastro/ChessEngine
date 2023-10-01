@@ -74,7 +74,7 @@ void uci_loop(board *b){
         }
 
         if(strncmp(input, "go", 2) == 0){
-            lastMove = search_position(b, 7, lastMove);
+            lastMove = search_position(b, 4, lastMove);
             continue;
         }
 
@@ -87,6 +87,9 @@ void uci_loop(board *b){
         }
         if(strncmp(input, "exit", 4) == 0){
             break;
+        }
+        if(strncmp(input, "quit", 4) == 0){
+            exit(0);
         }
 
     }
